@@ -6,7 +6,8 @@ import HomePage from './pages/homepage/homepage.component';
 import AboutPage from './pages/about/about.component';
 import DetailsPage from './pages/details/details.component';
 import LoginPage from './pages/login/login.component';
-import RegisterPage from './pages/register/register.component';
+import UserRegistrationPage from './pages/register/user-registration-page';
+import BusinessRegistrationPage from './pages/register/business-registration-page';
 import AccountPage from './pages/account/account.component';
 
 import Header from './components/header/header.component';
@@ -21,7 +22,8 @@ const App = () => {
         <Route path="/account/:display_name" component={AccountPage} />
         <Route path="/details/:bid" component={DetailsPage} />
         <Route exact path="/login" component={LoginPage} />
-        <Route exact path="/register" component={RegisterPage} />
+        <Route exact path="/accounts/users" component={UserRegistrationPage} />
+        <Route exact path="/accounts/businesses" component={BusinessRegistrationPage} />
         <Route component={() => (
           <h1> Oops! Page not found!</h1>
         )} />
