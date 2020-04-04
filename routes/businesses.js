@@ -8,7 +8,8 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const path = require('path');
-
+//stored the SQL procs in an array for modularity if any procedures need to be added later
+let sqlArray = ['call selectBusiness(?);', 'call selectBusinessImages(?);', 'call selectBusinessHours(?);', 'call selectDeals(?);', 'call selectDealHours(?);']
 
 router.get('/', (request, response) => {
   // send back dummy data array of objects with data for homepage
@@ -17,7 +18,6 @@ router.get('/', (request, response) => {
 
 router.get('/:business_id', (request, response) => {
   //send back info for a particular business based on their unique business id
-  let sqlArray = ['call selectBusiness(?);', 'call selectBusinessImages(?);', 'call selectBusinessHours(?);', 'call selectDeals(?);', 'call selectDealHours(?);'] 
   var jsonArray = [];
   for (let step = 0; step <= sqlArray.length-1; step++) {
     db.query(sqlArray[step], request.params.business_id, (error, [[results]]) => {
