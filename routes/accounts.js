@@ -184,6 +184,7 @@ router.post(
 
 router.get('/businesses/:business_id', (request, response) => {
  //send back info for a particular business based on their unique business id
+ //stored the SQL procs in an array for modularity if any procedures need to be added later
  let sqlArray = ['call selectBusiness(?);', 'call selectBusinessImages(?);', 'call selectBusinessHours(?);', 'call selectDeals(?);', 'call selectDealHours(?);'] 
  var jsonArray = [];
  for (let step = 0; step <= sqlArray.length-1; step++) {
