@@ -16,48 +16,25 @@ router.get('/', (request, response) => {
 })
 
 router.get('/:business_id', (request, response) => {
-  var combinedOutput;
   //send back info for a particular business based on their unique business id
-  let sql = 'select * from businesses where business_id = ?';
-  let sql1= 'SELECT path FROM business_discovery.business_images WHERE business_id = ?;'
-  let sql2 = 'select deal_id from business_discovery.business_deals where bus_deals_id = ?;'
-  db.query(sql, request.params.business_id, (error, results) => {
-    var queryJSON = results;
-    if(error) {
-      return console.error(error.message);
-    }
-    combinedOutput = queryJSON;
-  });  
-  db.query(sql1, request.params.business_id, (error, results) => {
-    var queryJSON1 = results;
-    console.log(results)
-    if(error) {
-      return console.error(error.message);
-    }
-    combinedOutput.push(queryJSON1);
-  });  
-  
-  db.query(sql2, request.params.business_id, (error, results) => {
-    var queryJSON2 = results;
-    console.log(results)
-    if(error) {
-      return console.error(error.message);
-    }
-    combinedOutput.push(queryJSON2);
-    response.json(combinedOutput);
-  });  
-  
-  
-  // let sql = 'CALL business_discovery.selectBusiness(?)'
-  // db.query(sql, request.params.business_id, (error, results) => {
-  //   var queryJSON = results[0];
-  //   if(error) {
-  //     return console.error(error.message);
-  //   }
-  //   combinedOutput = queryJSON;
-  //   console.log(combinedOutput);
-  //   response.json(combinedOutput);
-  // });
+  let sqlArray = ['call selectBusiness(?);', 'call selectBusinessImages(?);', 'call selectBusinessHours(?);', 'call selectDeals(?);', 'call selectDealHours(?);'] 
+  var jsonArray = [];
+  for (let step = 0; step <= sqlArray.length-1; step++) {
+    db.query(sqlArray[step], request.params.business_id, (error, [[results]]) => {
+      if(error) {
+        return console.error(error.message);
+      }
+      //makes sure we only get a response once we've executed the last SQL proc 
+      if(step == (sqlArray.length-1)) {
+        jsonArray.push(results);
+        response.json(jsonArray);
+        console.log(jsonArray);
+      }
+      else {
+        jsonArray.push(results);
+      }
+    });  
+  };
 });
 
 module.exports = router
