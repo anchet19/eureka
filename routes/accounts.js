@@ -196,7 +196,6 @@ router.get('/businesses/:business_id', (request, response) => {
      if(step == (sqlArray.length-1)) {
        jsonArray.push(results);
        response.json(jsonArray);
-       console.log(jsonArray);
      }
      else {
        jsonArray.push(results);
