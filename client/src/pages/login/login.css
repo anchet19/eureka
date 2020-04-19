@@ -1,0 +1,44 @@
+form {
+    border: none;
+}
+
+.center {
+    width: 50%;
+    height: 100%;
+    margin-left: 25%;
+}
+
+input[type=username], input[type=password] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: rgb(0, 28, 185);
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  button:hover {
+    opacity: 0.8;
+  }
+
+  .container {
+    padding: 16px;
+  }
+
+  @media screen and (max-width: 600px) {
+    .center {
+        height: 100%;
+        width: 100%;
+        margin-left: 0%;
+    }
+}
