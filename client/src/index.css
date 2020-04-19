@@ -11,24 +11,3 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
-.border-main {
-  display: inline-block;
-  width: 45rem;
-  height: auto;
-  margin: 0.5rem;
-  background-color: #eee;
-  border-style: solid;
-}
-
-.col-centered {
-  float: none;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.border-carousel {
-  margin: auto;
-  margin-top: 3rem;
-  width: 75rem;
-}
