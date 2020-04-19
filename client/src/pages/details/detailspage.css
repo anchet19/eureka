@@ -1,0 +1,49 @@
+/*
+    @author Mateusz Koza
+    Created css style sheet for only the details page.
+*/
+
+/* Controls the image carousel content */
+.border-carousel {
+    margin: auto;
+    margin-top: 3rem;
+    max-width: 65rem;
+  }
+
+/* Center all the contents on the page */
+.col-centered {
+    float: none;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+/* Controls 'Business Hours','Deals','Promos' cards */
+.card-style {
+      max-width: 450px;
+      min-width: 450px;
+      max-height: 150px;
+      min-height: 150px;
+      margin-bottom: 5rem;
+      position: relative;
+      margin: auto;
+  }
+
+/* Control the max size of carousel images */
+.image-style {
+    max-height: 300px;
+    max-width: 300px;
+    object-fit: fill;
+}
+
+/* Mobile content */
+@media only screen and (max-width: 600px) {
+  .card-style {
+    max-width: 350px;
+    min-width: 350px;
+    max-height: 150px;
+    min-height: 150px;
+    margin-bottom: 5rem;
+    position: relative;
+    margin: auto;
+  }
+}
