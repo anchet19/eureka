@@ -5,9 +5,21 @@ import React, { Component } from 'react';
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import Slider from 'infinite-react-carousel';
-import { Card, CardContent, Typography, Fab, Grid } from '@material-ui/core';
-import NavigationIcon from '@material-ui/icons/Navigation';
+import { Card, CardContent, Typography, Fab, GridList, Modal } from '@material-ui/core';
+import './detailspage.css';
  
+import NavigationIcon from '@material-ui/icons/Navigation';
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import CallIcon from '@material-ui/icons/Call';
+import LocationOnIcon from '@material-ui/icons/LocationOn';
+import StarsIcon from '@material-ui/icons/Stars';
+import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
+import LocalDiningIcon from '@material-ui/icons/LocalDining';
+
+const width = window.innerWidth;
+const mobileWidth = 600;
+const isMobile = width <= mobileWidth;
+
 // Example mock data for proper formatting
 let business = {
   name: "Burger Barn",
@@ -30,7 +42,7 @@ let business = {
   lat: 39.710380,
   lng: -75.124900
 }
- 
+
 /*
 Carousel for the business page
 Contains features:
@@ -41,7 +53,6 @@ Contains features:
 */
 class CarouselSlider extends Component {
   render() {
- 
     // Business images will be retrieved by obtaining the path name for each image that the specified
     // business included, which will then be pushed into an array. That array will then be used to display
     // all the images into the carousel with correct formatting
@@ -52,6 +63,16 @@ class CarouselSlider extends Component {
       "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSXqBMTHmbMfWaoGjd5np4NXet3fb1ANq1Cf4Ds-TS2TBtYLg3V",
       "https://pngimage.net/wp-content/uploads/2018/05/burger-and-fries-png-2.png"
     ];
+ 
+    // Fixes image overlap if the screen view port width is <= 500
+    let slidesToShow;
+ 
+    if(isMobile) {
+      slidesToShow = 1;
+    }
+    else {
+      slidesToShow = 3;
+    }
     
     // Different features for the carousel
     const settings =  {
@@ -60,7 +81,7 @@ class CarouselSlider extends Component {
       autoplaySpeed: 3000,
       dots: true,
       duration: 100,
-      slidesToShow: 3
+      slidesToShow
     };
  
     // Returns the carousel with all the businesses images loaded into it
@@ -71,12 +92,13 @@ class CarouselSlider extends Component {
               {images.map((value, index) => {
                 return (
                 <div key={ index }>
-                  <img style={{maxHeight: 210, maxWidth: 210, objectFit: "fill"}} src={ value } alt={ "image"+ (index + 1) } />
+                  <img className="image-style" src={ value } alt={ "image"+ (index + 1) } />
                 </div>
                 )
             })}
         </Slider>
-        <br /><h3><Link to="">menu.pdf</Link></h3>
+        { /* Change the href to pdf file from business */ }
+        <br /><h3><a href={"http://localhost:3000/static/media/menu.f56022d4.pdf"} target="_blank">menu.pdf</a></h3>
       </div>
     );
   }
@@ -97,9 +119,17 @@ let des = latitude+','+longitude; // Concatenate lat and lng to use in URL
  
 class OpenDirections extends Component {
   handleOpen = (e) => {
-    e.preventDefault();
-    window.open('https://www.google.com/maps/dir/?api=1&destination='+des);
-    console.log("Destination: " + des);
+    /* Handle Browser Maps */
+    if(!isMobile) {
+      e.preventDefault(); // Prevents the reloading the browser
+      window.open('https://www.google.com/maps/dir/?api=1&destination='+des);
+      console.log("Destination: " + des);
+    }
+    /* Handle Mobile Maps */
+    else {
+      e.preventDefault(); // Prevents the reloading the browser
+      mobileMapSelector();
+    }
   };
   render() {
     return(
@@ -112,12 +142,43 @@ class OpenDirections extends Component {
     );
   }
 }
+
+/*
+    Determines what platform the user has (Android, iOS)
+    Android:
+      - Android handles the opening of a map application
+    iOS:
+      - Will automatically open Apple Maps or whatever version of google maps
+        iOS uses
+*/
+function mobileMapSelector() {
+  const user = navigator.userAgent || navigator.vendor || window.opera;
+  let plat;
+
+  /* Determins if an Android phone is being used */
+  if (/android/i.test(user)) {
+    plat = "Android";
+  }
+
+  /* Determins if an iOS phone is being used */
+  if (/iPad|iPhone|iPod/.test(plat) && !window.MSStream) {
+    plat = "iOS";
+  }
+
+  /* Use the appropriate link for different mobile platforms */
+  if(plat == "iOS") { /* Handles iOS */
+    window.open('maps://maps.google.com/maps/dir/?api=1&destination='+des);
+  }
+  else { /* Handles Android */
+    window.open('https://www.google.com/maps/dir/?api=1&destination='+des);
+  }
+}
  
 const DetailsPage = () => {
   let { bid } = useParams();
+
   return (
     <div className="col-centered">
- 
       <div>
         <Card>
           <CardContent>
@@ -126,14 +187,18 @@ const DetailsPage = () => {
               {business.name}
             </Typography>
             <Typography variant="subtitle1" color="textSecondary" component="p">
+              <LocationOnIcon />
               {business.address}
             </Typography>
             <Typography variant="subtitle1" color="textSecondary" component="p">
+              <CallIcon />
               {business.phone}
             </Typography>
             <Typography variant="subtitle1" color="textSecondary" component="p">
+              <LocalDiningIcon />
               {business.tags}
             </Typography>
+
             <br/>
  
             <OpenDirections />
@@ -154,22 +219,12 @@ const DetailsPage = () => {
       <br />
       <br />
  
-      <div>
-      <Card style={{maxWidth: 1000, position: "relative", margin: "auto"}}>
- 
-        <CardContent>
-          <Typography style={{fontSize: 28}} color="textPrimary" gutterBottom>
-           Details
-          </Typography>
-        </CardContent>
- 
-        <div style={{minWidth: 950, maxWidth: 950, minHeight: 150, maxHeight: 150, marginBottom: 25, marginLeft: 25}}>
- 
-        <Grid container spacing={2}>
-          <Grid item xs={4}>
-            <Card>
+        <GridList cols={3}>
+          
+            <Card className="card-style">
               <CardContent>
-                <Typography variant="h5" component="h2">
+                <Typography variant="h6" component="h2">
+                  <AccessTimeIcon />
                   Business Hours
                 </Typography>
                 <br/>
@@ -180,11 +235,11 @@ const DetailsPage = () => {
                 </Typography>
               </CardContent>
             </Card>
-          </Grid>
-          <Grid item xs={4}>
-            <Card>
+ 
+            <Card className="card-style">
               <CardContent>
-                <Typography variant="h5" component="h2">
+                <Typography variant="h6" component="h2">
+                  <MonetizationOnIcon />
                   Deals
                 </Typography>
                 <br/>
@@ -195,11 +250,11 @@ const DetailsPage = () => {
                 </Typography>
               </CardContent>
             </Card>
-          </Grid>
-          <Grid item xs={4}>
-            <Card>
+ 
+            <Card className="card-style">
               <CardContent>
-                <Typography variant="h5" component="h2">
+                <Typography variant="h6" component="h2">
+                  <StarsIcon />
                   Promos
                 </Typography>
                 <br/>
@@ -210,29 +265,26 @@ const DetailsPage = () => {
                 </Typography>
               </CardContent>
             </Card>
-          </Grid>
-        </Grid>
  
-        </div>
- 
-      </Card>
-      </div>
+        </GridList>
  
       <br />
+
       <div>
-        <Card style={{maxWidth: 1000, position: "relative", margin: "auto"}}>
+        <Card className="card-style">
  
         <CardContent>
-          <Typography style={{fontSize: 28}} color="textPrimary" gutterBottom>
+          <Typography variant="h6" component="h2">
            Description
           </Typography>
-          <Typography style={{fontSize: 24}} color="textSecondary" gutterBottom>
+          <Typography variant="body1" component="p">
             {business.description}
           </Typography>
         </CardContent>
  
         </Card>
       </div>
+
       <br />
  
     </div>
