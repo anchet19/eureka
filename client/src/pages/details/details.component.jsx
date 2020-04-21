@@ -98,7 +98,7 @@ class CarouselSlider extends Component {
             })}
         </Slider>
         { /* Change the href to pdf file from business */ }
-        <br /><h3><a href={"http://localhost:3000/static/media/menu.f56022d4.pdf"} target="_blank">menu.pdf</a></h3>
+        <br /><h3><a href={"https://senior-project-eureka.s3.amazonaws.com/94/menus/1587321188585.pdf"} target="_blank">menu.pdf</a></h3>
       </div>
     );
   }
