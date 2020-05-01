@@ -4,27 +4,28 @@ import getLocation from '../../locationServices.js'
 import { DisplayMapFC } from './map/DisplayMapClass';
 import BusinessCard from './businessCard.component';
 import './homepage.css';
-import { Button, Slider, Popover, Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Button, Slider, Popover } from '@material-ui/core';
+import TuneIcon from '@material-ui/icons/Tune';
 
 const HomePage = () => {
 
+  // Initalizing items for Slider
   const marks = [
     {
       value: 5,
-      label: '5m',
+      label: '5mi',
     },
     {
       value: 15,
-      label: '15m',
+      label: '15mi',
     },
     {
       value: 30,
-      label: '30m',
+      label: '30mi',
     },
     {
       value: 45,
-      label: '45m',
+      label: '45mi',
     },
   ];
   
@@ -32,6 +33,8 @@ const HomePage = () => {
     return `${value}°C`;
   }
 
+
+  // Initializing items for Popover
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
@@ -110,46 +113,90 @@ const HomePage = () => {
         {demoBusinesses.length !== 0 ? demoBusinesses.map((business, index) => <BusinessCard business={business} index={index + 1} />) : null}
       </div>
       <div className="MapContainer">
-        <div className=""
-          style={{
-            position: "absolute",
-            padding: "5px",
-            width: "100px",
-            zIndex: 2,
-            
-        }}>
-        <Button aria-describedby={id} variant="contained" color="primary" onClick={handleClick}>
-          RADIUS
-        </Button>
-        <Popover
-          id={id}
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'left',
-          }}
-        >
-          <div style={{paddingLeft: "20px", paddingRight: "20px", paddingTop: "25px"}}>
-            <br />
-            <Slider
-              defaultValue={15}
-              getAriaValueText={valuetext}
-              aria-labelledby="discrete-slider-small-steps"
-              step={5}
-              marks={marks}
-              min={5}
-              max={45}
-              valueLabelDisplay="auto"
-              style={{padding: "10px", width: "300px", height: "10px"}}
-            />
+        <div className="MapControls">
+          <div className="RadiusControls"
+            style={{
+              position: "absolute",
+              padding: "5px",
+              height: "50px",
+              width: "50px",
+              zIndex: 1,
+          }}>
+            <Button aria-describedby={id} variant="contained" color="primary" onClick={handleClick} style={{minWidth: "0px"}}>
+              <img src="/map_marker_radius.svg" alt="Smiley face" height="30" width="30"/>
+            </Button>
+            <Popover
+              id={id}
+              open={open}
+              anchorEl={anchorEl}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+            >
+              <div style={{paddingLeft: "20px", paddingRight: "20px", paddingTop: "25px", overflowY: "hidden"}}>
+                <br />
+                <Slider
+                  defaultValue={radius}
+                  getAriaValueText={valuetext}
+                  aria-labelledby="discrete-slider-small-steps"
+                  step={5}
+                  marks={marks}
+                  min={5}
+                  max={45}
+                  valueLabelDisplay="auto"
+                  style={{padding: "10px", width: "150px", height: "10px"}}
+                />
+              </div>
+            </Popover>
           </div>
-        </Popover>
+          <div className="FilterControls"
+            style={{
+              position: "absolute",
+              padding: "5px",
+              height: "50px",
+              width: "50px",
+              left: "50px",
+              zIndex: 1,
+            }}>
+           <Button aria-describedby={id} variant="contained" color="primary" onClick={handleClick} style={{minWidth: "0px"}}>
+              <TuneIcon style={{height: "30px", width: "30px"}}/>
+            </Button>
+            <Popover
+              id={id}
+              open={open}
+              anchorEl={anchorEl}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+            >
+              <div style={{paddingLeft: "20px", paddingRight: "20px", paddingTop: "25px", overflowY: "hidden"}}>
+                <br />
+                <Slider
+                  defaultValue={radius}
+                  getAriaValueText={valuetext}
+                  aria-labelledby="discrete-slider-small-steps"
+                  step={5}
+                  marks={marks}
+                  min={5}
+                  max={45}
+                  valueLabelDisplay="auto"
+                  style={{padding: "10px", width: "150px", height: "10px"}}
+                />
+              </div>
+            </Popover>
+          </div>
         </div>
         {coords.lat && coords.lng && demoBusinesses.length !== 0 ? <DisplayMapFC coords={coords} businesses={demoBusinesses} /> : null}
       </div>
