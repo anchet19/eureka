@@ -11,10 +11,12 @@
     seems to be ok and does not cause this problem on my
     1080px height monitor.
 */
+/*
 html, body {
     max-width:  100%;
     overflow-x: hidden;
 }
+*/
 
 .MapContainer {
     display:    inline-block;
@@ -28,6 +30,18 @@ html, body {
     position:   absolute;
     width:      calc(100vw - 300px);
     height:     calc(100vh - 64px);
+}
+
+.MapControls {
+    position:   absolute;
+    z-index:    1;
+}
+
+.MapButton {
+    display:    inline-block;
+    padding:    5px;
+    height:     50px;
+    width:      50px;
 }
 
 .MobileBusinessList {

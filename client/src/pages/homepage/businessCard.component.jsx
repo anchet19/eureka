@@ -5,7 +5,7 @@ import { Card, CardContent, Typography } from '@material-ui/core';
 export default class BusinessCard extends Component {
     render() {
         return (
-            <Link to={`/details/` + this.props.business.business_id} style={{textDecoration: "none", zIndex: 5}}>
+            <Link to={`/details/` + this.props.business.business_id} style={{textDecoration: "none"}}>
                 <Card style={{ margin: 5}}>
                     <CardContent style={{ padding: 10 }}>
                         <span>

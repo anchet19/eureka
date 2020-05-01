@@ -114,13 +114,11 @@ const HomePage = () => {
       </div>
       <div className="MapContainer">
         <div className="MapControls">
-          <div className="RadiusControls"
+          <div className="RadiusControls MapButton"
             style={{
-              position: "absolute",
               padding: "5px",
               height: "50px",
               width: "50px",
-              zIndex: 1,
           }}>
             <Button aria-describedby={id} variant="contained" color="primary" onClick={handleClick} style={{minWidth: "0px"}}>
               <img src="/map_marker_radius.svg" alt="Smiley face" height="30" width="30"/>
@@ -155,14 +153,12 @@ const HomePage = () => {
               </div>
             </Popover>
           </div>
-          <div className="FilterControls"
+          <div className="FilterControls MapButton"
             style={{
-              position: "absolute",
               padding: "5px",
               height: "50px",
               width: "50px",
               left: "50px",
-              zIndex: 1,
             }}>
            <Button aria-describedby={id} variant="contained" color="primary" onClick={handleClick} style={{minWidth: "0px"}}>
               <TuneIcon style={{height: "30px", width: "30px"}}/>
