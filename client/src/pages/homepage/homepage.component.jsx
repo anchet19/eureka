@@ -4,7 +4,7 @@ import getLocation from '../../locationServices.js'
 import { DisplayMapFC } from './map/DisplayMapClass';
 import BusinessCard from './businessCard.component';
 import './homepage.css';
-import { Button, Slider, Popover } from '@material-ui/core';
+import { Button, Slider, Popover, Typography } from '@material-ui/core';
 import TuneIcon from '@material-ui/icons/Tune';
 
 const HomePage = () => {
@@ -34,19 +34,33 @@ const HomePage = () => {
   }
 
 
-  // Initializing items for Popover
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  // Initializing items for Radius Popover
+  const [anchorElRad, setAnchorElRad] = React.useState(null);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handleClickRad = (event) => {
+    setAnchorElRad(event.currentTarget);
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
+  const handleCloseRad = () => {
+    setAnchorElRad(null);
   };
 
-  const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
+  const openRad = Boolean(anchorElRad);
+  const idRad = openRad ? 'simple-popover' : undefined;
+
+  // Initializing items for Filter Popover
+  const [anchorElFil, setAnchorElFil] = React.useState(null);
+
+  const handleClickFil = (event) => {
+    setAnchorElFil(event.currentTarget);
+  };
+
+  const handleCloseFil = () => {
+    setAnchorElFil(null);
+  };
+
+  const openFil = Boolean(anchorElFil);
+  const idFil = openFil ? 'simple-popover' : undefined;
 
   // Getting Location
   const [coords, setCoords] = useState({
@@ -114,20 +128,15 @@ const HomePage = () => {
       </div>
       <div className="MapContainer">
         <div className="MapControls">
-          <div className="RadiusControls MapButton"
-            style={{
-              padding: "5px",
-              height: "50px",
-              width: "50px",
-          }}>
-            <Button aria-describedby={id} variant="contained" color="primary" onClick={handleClick} style={{minWidth: "0px"}}>
+          <div className="RadiusControls MapButton">
+            <Button aria-describedby={idRad} variant="contained" color="primary" onClick={handleClickRad} style={{minWidth: "0px"}}>
               <img src="/map_marker_radius.svg" alt="Smiley face" height="30" width="30"/>
             </Button>
             <Popover
-              id={id}
-              open={open}
-              anchorEl={anchorEl}
-              onClose={handleClose}
+              id={idRad}
+              open={openRad}
+              anchorEl={anchorElRad}
+              onClose={handleCloseRad}
               anchorOrigin={{
                 vertical: 'bottom',
                 horizontal: 'left',
@@ -138,7 +147,9 @@ const HomePage = () => {
               }}
             >
               <div style={{paddingLeft: "20px", paddingRight: "20px", paddingTop: "25px", overflowY: "hidden"}}>
-                <br />
+                <Typography id="discrete-slider-restrict" gutterBottom>
+                  Radius
+                </Typography>
                 <Slider
                   defaultValue={radius}
                   getAriaValueText={valuetext}
@@ -160,14 +171,14 @@ const HomePage = () => {
               width: "50px",
               left: "50px",
             }}>
-           <Button aria-describedby={id} variant="contained" color="primary" onClick={handleClick} style={{minWidth: "0px"}}>
+           <Button aria-describedby={idFil} variant="contained" color="primary" onClick={handleClickFil} style={{minWidth: "0px"}}>
               <TuneIcon style={{height: "30px", width: "30px"}}/>
             </Button>
             <Popover
-              id={id}
-              open={open}
-              anchorEl={anchorEl}
-              onClose={handleClose}
+              id={idFil}
+              open={openFil}
+              anchorEl={anchorElFil}
+              onClose={handleCloseFil}
               anchorOrigin={{
                 vertical: 'bottom',
                 horizontal: 'left',
