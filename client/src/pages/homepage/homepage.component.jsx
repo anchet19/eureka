@@ -4,8 +4,46 @@ import getLocation from '../../locationServices.js'
 import { DisplayMapFC } from './map/DisplayMapClass';
 import BusinessCard from './businessCard.component';
 import './homepage.css';
+import { Button, Slider, Popover, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 
 const HomePage = () => {
+
+  const marks = [
+    {
+      value: 5,
+      label: '5m',
+    },
+    {
+      value: 15,
+      label: '15m',
+    },
+    {
+      value: 30,
+      label: '30m',
+    },
+    {
+      value: 45,
+      label: '45m',
+    },
+  ];
+  
+  function valuetext(value) {
+    return `${value}°C`;
+  }
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
 
   // Getting Location
   const [coords, setCoords] = useState({
@@ -71,9 +109,52 @@ const HomePage = () => {
       <div className="DesktopBusinessList">
         {demoBusinesses.length !== 0 ? demoBusinesses.map((business, index) => <BusinessCard business={business} index={index + 1} />) : null}
       </div>
-      {coords.lat && coords.lng && demoBusinesses.length !== 0 ? <DisplayMapFC coords={coords} businesses={demoBusinesses} /> : null}
+      <div className="MapContainer">
+        <div className=""
+          style={{
+            position: "absolute",
+            padding: "5px",
+            width: "100px",
+            zIndex: 2,
+            
+        }}>
+        <Button aria-describedby={id} variant="contained" color="primary" onClick={handleClick}>
+          RADIUS
+        </Button>
+        <Popover
+          id={id}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+        >
+          <div style={{paddingLeft: "20px", paddingRight: "20px", paddingTop: "25px"}}>
+            <br />
+            <Slider
+              defaultValue={15}
+              getAriaValueText={valuetext}
+              aria-labelledby="discrete-slider-small-steps"
+              step={5}
+              marks={marks}
+              min={5}
+              max={45}
+              valueLabelDisplay="auto"
+              style={{padding: "10px", width: "300px", height: "10px"}}
+            />
+          </div>
+        </Popover>
+        </div>
+        {coords.lat && coords.lng && demoBusinesses.length !== 0 ? <DisplayMapFC coords={coords} businesses={demoBusinesses} /> : null}
+      </div>
       <div className="MobileBusinessList">
-        {demoBusinesses.length !== 0 ? demoBusinesses.map((business, index) => <BusinessCard business={business} index={index + 1}/>) : null}
+      {demoBusinesses.length !== 0 ? demoBusinesses.map((business, index) => <BusinessCard business={business} index={index + 1} />) : null}
       </div>
     </div>
   );

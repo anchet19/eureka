@@ -14,7 +14,13 @@
 html, body {
     max-width:  100%;
     overflow-x: hidden;
-    overflow-y: hidden;
+}
+
+.MapContainer {
+    display:    inline-block;
+    position:   absolute;
+    width:      calc(100vw - 300px);
+    height:     calc(100vh - 64px);
 }
 
 .map {
@@ -55,6 +61,13 @@ html, body {
 @media only screen and (max-width: 600px) {
     html {
         font-size: 75%;
+    }
+
+    .MapContainer {
+        display:    block;
+        position:   static;
+        width:      100vw;
+        height:     calc(100vh - (30vh + 56px));
     }
 
     .map {
