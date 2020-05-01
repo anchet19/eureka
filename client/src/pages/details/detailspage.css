@@ -5,7 +5,7 @@
 
 /* Controls the image carousel content */
 .border-carousel {
-    margin: auto;
+    margin-bottom: auto;
     margin-top: 3rem;
     max-width: 65rem;
   }
@@ -19,10 +19,10 @@
 
 /* Controls 'Business Hours','Deals','Promos' cards */
 .card-style {
-      max-width: 450px;
-      min-width: 450px;
-      max-height: 150px;
-      min-height: 150px;
+      max-width: 600px;
+      min-width: 600px;
+      max-height: 250px;
+      min-height: 250px;
       margin-bottom: 5rem;
       position: relative;
       margin: auto;
@@ -45,5 +45,10 @@
     margin-bottom: 5rem;
     position: relative;
     margin: auto;
+  }
+  .border-carousel {
+    margin: auto;
+    margin-top: 3rem;
+    max-width: 20rem;
   }
 }
