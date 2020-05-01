@@ -60,58 +60,58 @@ const BusinessForm = (props) => {
   const [photos, setPhotos] = useState()
 
   // Geocode function to get lat, long
-  function Geocode(){
+  function Geocode() {
     var location = 'address';
     axios.get('GET https://geocode.search.hereapi.com/v1/geocode', {
-      params:{
+      params: {
         address: location,
         key: '' // not sure what the key is
       }
     })
-    // console log respone
-    .then(function(response){
-      console.log(response);
+      // console log respone
+      .then(function (response) {
+        console.log(response);
 
-       // Geometry
-       var lat = response.data.results[0].geometry.location.lat;
-       var lng = response.data.results[0].geometry.location.lng;
-       var geometryOutput = `
+        // Geometry
+        var lat = response.data.results[0].geometry.location.lat;
+        var lng = response.data.results[0].geometry.location.lng;
+        var geometryOutput = `
          <ul class="list-group">
            <li class="list-group-item"><strong>Latitude</strong>: ${lat}</li>
            <li class="list-group-item"><strong>Longitude</strong>: ${lng}</li>
          </ul>
        `;
 
-       document.getElementById('geometry').innerHTML = geometryOutput;
+        document.getElementById('geometry').innerHTML = geometryOutput;
 
-    })
-    // catch errors
-    .catch(function(error){
-      console.log(error);
-    });
+      })
+      // catch errors
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
   // axios request goes in here
   const handleSubmit = e => {
     e.preventDefault()
     axios.post('localhost:5000/api/v1/accounts/businesses',
-    /*
-    {
-       name = name,
-       address= address,
-       cuisine = selectedTag,
-       lat=39.739892,
-       lng=-75.077385,
-       uid=95,
-       description= description,
-       isAdult=0,
-       tel= tel,
-       deals= deals,
-       hours= hours,
-       menu= menu,
-       photo = photos
-    }
-    */
+      /*
+      {
+         name = name,
+         address= address,
+         cuisine = selectedTag,
+         lat=39.739892,
+         lng=-75.077385,
+         uid=95,
+         description= description,
+         isAdult=0,
+         tel= tel,
+         deals= deals,
+         hours= hours,
+         menu= menu,
+         photo = photos
+      }
+      */
     )
     console.log('submitted');
   }
@@ -128,20 +128,20 @@ const BusinessForm = (props) => {
           <OutlinedTextField value={zip} onChange={event => setZip(event.target.value)} id='zip' label='Zip' type='text' />
           <OutlinedTextField value={tel} onChange={event => setTel(event.target.value)} id='tel' label='Telephone' type='tel' />
           <OutlinedTextField value={description} onChange={event => setDescription(event.target.value)} id='description' label='Description' type='tel' />
-          </FormGroup>
-          <FormGroup>
+        </FormGroup>
+        <FormGroup>
           <FormControl >
-                <InputLabel id='tag-selector'> Tags</InputLabel>
-                <Select labelId='tag-selector' value={selectedTag} onChange={event => setSelectedTag(event.target.value)}>
-                  {tags.map(tag => (<MenuItem key={tag} value={tag} > {tag} </MenuItem>))}
-                </Select>
-                <br/>
-            </FormControl>
-            <InputLabel id='photos-selector'> Import Photos</InputLabel>
-            <Input type="file" inputProps={{ multiple: true, accept: 'image/x-png,image/gif,image/jpeg,image/jpg' }} value = {photos} onChange = {event => setPhotos(event.target.value)}/>
-                <InputLabel id='photos-selector'> Import Menu</InputLabel>
-                <Input type="file" inputProps={{ multiple: true, accept: 'image/x-png,image/gif,image/jpeg,image/jpg' }} value = {menu} onChange = {event => setMenu(event.target.value)}/>
-          </FormGroup>
+            <InputLabel id='tag-selector'> Tags</InputLabel>
+            <Select labelId='tag-selector' value={selectedTag} onChange={event => setSelectedTag(event.target.value)}>
+              {tags.map(tag => (<MenuItem key={tag} value={tag} > {tag} </MenuItem>))}
+            </Select>
+            <br />
+          </FormControl>
+          <InputLabel id='photos-selector'> Import Photos</InputLabel>
+          <Input type="file" inputProps={{ multiple: true, accept: 'image/x-png,image/gif,image/jpeg,image/jpg' }} onChange={event => setPhotos(event.target.files)} />
+          <InputLabel id='photos-selector'> Import Menu</InputLabel>
+          <Input type="file" inputProps={{ accepts: 'application/pdf' }} onChange={event => setMenu(event.target.files)} />
+        </FormGroup>
         <Divider style={{ margin: '8px' }} />
         <FormLabel component='legend'>Hours</FormLabel>
         <DayEventList items={hours} onAdd={data => setHours(data)} onRemove={data => setHours(data)} />
