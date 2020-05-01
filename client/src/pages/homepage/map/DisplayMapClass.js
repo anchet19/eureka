@@ -42,42 +42,59 @@ export const DisplayMapFC = ( {coords, businesses, ...props} ) => {
     hMap.addObject(marker);
 
     businesses.map((business, index) => {
-    // Define a variable holding SVG mark-up that defines an icon image:
-    const svgMarkup = 
-    '<svg ' +
-      'width="24" ' +
-      'height="24" ' +
-      'xmlns="http://www.w3.org/2000/svg"' + 
-    '>' +
-      '<rect ' +
-        'stroke="white" ' +
-        'fill="#3f51b5" ' + 
-        'x="1" ' + 
-        'y="1" ' +
-        'width="22" ' +
-       'height="22" ' +
-      '/> ' +
-      '<text ' + 
-      'x="12" ' + 
-      'y="18"  ' +
-      'font-size="12pt" ' +
-      'font-family="Arial" ' +
-      'text-anchor="middle" ' +
-      'fill="white" ' + 
-      '>' + 
-        (index + 1) + 
-      '</text> ' +
+      // Create an icon and a marker:
+      
+      // Define a variable holding SVG mark-up that defines an icon image:
+      const svgMarkup = 
+      '<svg ' +
+        'width="24" ' +
+        'height="24" ' +
+        'xmlns="http://www.w3.org/2000/svg"' + 
+      '>' +
+        '<rect ' +
+          'stroke="white" ' +
+          'fill="#3f51b5" ' + 
+          'x="1" ' + 
+          'y="1" ' +
+          'width="22" ' +
+         'height="22" ' +
+        '/> ' +
+        '<text ' + 
+        'x="12" ' + 
+        'y="18"  ' +
+        'font-size="12pt" ' +
+        'font-family="Arial" ' +
+        'text-anchor="middle" ' +
+        'fill="white" ' + 
+        '>' + 
+          (index + 1) + 
+        '</text> ' +
       '</svg>';
-    const {lat, long} = business
-    // Create an icon and a marker:
-    hMap.addObject(new H.map.Marker(
-      {lat: lat, lng: long}, 
-      {icon: 
-        new H.map.Icon(svgMarkup)
+      
+      const {name, address, cuisine, lat, long} = business
+  
+      const marker = new H.map.Marker(
+        {lat: lat, lng: long}, 
+        {icon: 
+          new H.map.Icon(svgMarkup)
+        });
+  
+      marker.setData(name + "<br />" + address + "<br />" + cuisine);
+  
+      marker.addEventListener("tap", event => {
+        const bubble = new H.ui.InfoBubble(
+          event.target.getGeometry(),
+          {
+            content: event.target.getData()
+          }
+        );
+        ui.addBubble(bubble);
+      }, false);
+  
+      // Add marker
+      hMap.addObject(marker);
+  
       })
-    );
-
-    })
 
     const behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(hMap));
 
