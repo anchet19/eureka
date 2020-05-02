@@ -97,12 +97,15 @@ const HomePage = () => {
         distance: 3.135449827421824
     }
 ];
+
+  let emptyBusinesses = [];
+
   return (
     <div className="HomepageComponent">
       <div className="DesktopBusinessList">
-        {businesses.length !== 0 ? businesses.map((business, index) => <BusinessCard business={business} key={index + 1} />) : null}
+        {emptyBusinesses.length !== 0 ? emptyBusinesses.map((business, index) => <BusinessCard business={business} key={index + 1} />) : null}
       </div>
-      {coords.lat && coords.lng && businesses.length !== 0 ? 
+      {coords.lat && coords.lng ? 
         <div className="MapContainer">
           <div className="MapControls">
             <MapButton className="RadiusControls" 
@@ -139,8 +142,7 @@ const HomePage = () => {
                   max={20}
                   valueLabelDisplay="auto"
                   style={{padding: "10px", width: "150px", height: "10px"}}
-                  onChange={ (e, val) => setRadius(val) }  
-                  onDragStop={ () => this.props.update(this.state.radius)}
+                  onChangeCommitted={ (e, val) => setRadius(val) }
                 />
               </div>
             </MapButton>
@@ -161,11 +163,11 @@ const HomePage = () => {
               </div>
             </MapButton>
           </div>
-          <DisplayMapFC coords={coords} businesses={businesses} />
+          <DisplayMapFC coords={coords} businesses={emptyBusinesses} />
         </div>
       : null}
       <div className="MobileBusinessList">
-      {businesses.length !== 0 ? businesses.map((business, index) => <BusinessCard business={business} key={index + 1} />) : null}
+      {emptyBusinesses.length !== 0 ? emptyBusinesses.map((business, index) => <BusinessCard business={business} key={index + 1} />) : null}
       </div>
     </div>
   );
