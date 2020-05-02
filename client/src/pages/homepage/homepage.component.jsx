@@ -13,12 +13,16 @@ const HomePage = () => {
   // Initalizing items for Slider
   const marks = [
     {
+      value: 0,
+      label: '0mi',
+    },
+    {
       value: 5,
       label: '5mi',
     },
     {
       value: 10,
-      label: '15mi',
+      label: '10mi',
     },
     {
       value: 15,
@@ -96,9 +100,9 @@ const HomePage = () => {
   return (
     <div className="HomepageComponent">
       <div className="DesktopBusinessList">
-        {businesses.length !== 0 ? businesses.map((business, index) => <BusinessCard business={business} key={index + 1} />) : null}
+        {demoBusinesses.length !== 0 ? demoBusinesses.map((business, index) => <BusinessCard business={business} key={index + 1} />) : null}
       </div>
-      {coords.lat && coords.lng && businesses.length !== 0 ? 
+      {coords.lat && coords.lng && demoBusinesses.length !== 0 ? 
         <div className="MapContainer">
           <div className="MapControls">
             <MapButton className="RadiusControls" 
@@ -157,11 +161,11 @@ const HomePage = () => {
               </div>
             </MapButton>
           </div>
-          <DisplayMapFC coords={coords} businesses={businesses} />
+          <DisplayMapFC coords={coords} businesses={demoBusinesses} />
         </div>
       : null}
       <div className="MobileBusinessList">
-      {businesses.length !== 0 ? businesses.map((business, index) => <BusinessCard business={business} key={index + 1} />) : null}
+      {demoBusinesses.length !== 0 ? demoBusinesses.map((business, index) => <BusinessCard business={business} key={index + 1} />) : null}
       </div>
     </div>
   );
