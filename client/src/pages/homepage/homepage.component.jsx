@@ -167,7 +167,7 @@ const HomePage = () => {
         </div>
       : null}
       <div className="MobileBusinessList">
-      {businesses.length !== 0 ? businesses.map((business, index) => <BusinessCard business={business} key={index + 1} />) : null}
+      {businesses.length !== 0 ? businesses.map((business, index) => <BusinessCard business={business} key={index + 1} index={index + 1} />) : null}
       </div>
     </div>
   );
