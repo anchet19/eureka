@@ -142,26 +142,28 @@ const HomePage = () => {
                   max={20}
                   valueLabelDisplay="auto"
                   style={{padding: "10px", width: "150px", height: "10px"}}
-                  onChangeCommitted={ (e, val) => setRadius(val) }
+                  onDragEnd={ (e, val) => setRadius(val) }
                 />
               </div>
             </MapButton>
-            <MapButton className="FilterControls" image={<TuneIcon color="action"/>}>
-              <div style={{paddingLeft: "20px", paddingRight: "20px", paddingTop: "25px", overflowY: "hidden"}}>
-                <br />
-                <Slider
-                  defaultValue={radius}
-                  getAriaValueText={valuetext}
-                  aria-labelledby="discrete-slider-small-steps"
-                  step={5}
-                  marks={marks}
-                  min={5}
-                  max={45}
-                  valueLabelDisplay="auto"
-                  style={{padding: "10px", width: "150px", height: "10px"}}
-                />
-              </div>
-            </MapButton>
+            <div style={{display: "none"}}>
+              <MapButton className="FilterControls" image={<TuneIcon color="action"/>}>
+                <div style={{paddingLeft: "20px", paddingRight: "20px", paddingTop: "25px", overflowY: "hidden"}}>
+                  <br />
+                  <Slider
+                    defaultValue={radius}
+                    getAriaValueText={valuetext}
+                    aria-labelledby="discrete-slider-small-steps"
+                    step={5}
+                    marks={marks}
+                    min={5}
+                    max={45}
+                    valueLabelDisplay="auto"
+                    style={{padding: "10px", width: "150px", height: "10px"}}
+                  />
+                </div>
+              </MapButton>
+            </div>
           </div>
           <DisplayMapFC coords={coords} businesses={businesses} />
         </div>
