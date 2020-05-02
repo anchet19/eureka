@@ -17,16 +17,16 @@ const HomePage = () => {
       label: '5mi',
     },
     {
+      value: 10,
+      label: '15mi',
+    },
+    {
       value: 15,
       label: '15mi',
     },
     {
-      value: 30,
-      label: '30mi',
-    },
-    {
-      value: 45,
-      label: '45mi',
+      value: 20,
+      label: '20mi',
     },
   ];
   
@@ -128,10 +128,10 @@ const HomePage = () => {
                 defaultValue={radius}
                 getAriaValueText={valuetext}
                 aria-labelledby="discrete-slider-small-steps"
-                step={5}
+                step={1}
                 marks={marks}
-                min={5}
-                max={45}
+                min={1}
+                max={20}
                 valueLabelDisplay="auto"
                 style={{padding: "10px", width: "150px", height: "10px"}}
                 onChange={ (e, val) => setRadius(val) }  
