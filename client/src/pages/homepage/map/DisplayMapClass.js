@@ -108,7 +108,7 @@ export const DisplayMapFC = ( {coords, businesses, ...props} ) => {
     return () => {
       hMap.dispose();
     };
-  }, [mapRef]); // This will run this hook every time this ref is updated
+  }, [mapRef, businesses]); // This will run this hook every time this ref is updated
 
   return <div className="map" ref={mapRef} ></div>;
 };
