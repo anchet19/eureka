@@ -130,10 +130,10 @@ const HomePage = () => {
             >
               <div style={{paddingLeft: "20px", paddingRight: "20px", paddingTop: "25px", overflow: "hidden"}}>
                 <Typography id="discrete-slider-restrict" gutterBottom>
-                  Radius
+                  Radius {radius}
                 </Typography>
                 <Slider
-                  defaultValue={radius}
+                  defaultValue={15}
                   getAriaValueText={valuetext}
                   aria-labelledby="discrete-slider-small-steps"
                   step={1}
@@ -142,7 +142,7 @@ const HomePage = () => {
                   max={20}
                   valueLabelDisplay="auto"
                   style={{padding: "10px", width: "150px", height: "10px"}}
-                  onDragEnd={ (e, val) => setRadius(val) }
+                  onChangeCommitted	={ (e, val) => setRadius(val)}
                 />
               </div>
             </MapButton>

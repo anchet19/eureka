@@ -17,7 +17,7 @@ function MapButton( props ) {
 
     return (
         <div className="MapButton">
-            <Button aria-describedby={id} variant="contained" color="default" onClick={handleClick} style={{minWidth: "0px", height:"40px"}}>
+            <Button aria-describedby={id} variant="contained" onClick={handleClick} style={{minWidth: "0px", height:"40px", backgroundColor: "white"}}>
                 {props.image}
             </Button>
             <Popover
