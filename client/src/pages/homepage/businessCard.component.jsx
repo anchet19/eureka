@@ -24,7 +24,7 @@ export default class BusinessCard extends Component {
                                 {this.props.business.cuisine}
                             </Typography>
                             <Typography variant="body1" color="textSecondary" component="p"    style={{fontSize: ".75rem"}}>
-                                {this.props.business.distance} mi
+                                {(Math.round(this.props.business.distance * 10) / 10).toFixed(1)} mi
                             </Typography>
                         </CardContent>
                     </Card>
