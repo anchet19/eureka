@@ -23,6 +23,9 @@ export default class BusinessCard extends Component {
                             <Typography variant="body1" color="textSecondary" component="p"    style={{fontSize: ".75rem"}}>
                                 {this.props.business.cuisine}
                             </Typography>
+                            <Typography variant="body1" color="textSecondary" component="p"    style={{fontSize: ".75rem"}}>
+                                {this.props.business.distance} mi
+                            </Typography>
                         </CardContent>
                     </Card>
                 </Link>

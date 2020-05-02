@@ -103,7 +103,7 @@ const HomePage = () => {
   return (
     <div className="HomepageComponent">
       <div className="DesktopBusinessList">
-        {businesses.length !== 0 ? businesses.map((business, index) => <BusinessCard business={business} key={index + 1} />) : null}
+        {businesses.length !== 0 ? businesses.map((business, index) => <BusinessCard business={business} index={index + 1} key={business.business_id} />) : null}
       </div>
       {coords.lat && coords.lng ? 
         <div className="MapContainer">
@@ -167,7 +167,7 @@ const HomePage = () => {
         </div>
       : null}
       <div className="MobileBusinessList">
-      {businesses.length !== 0 ? businesses.map((business, index) => <BusinessCard business={business} key={index + 1} index={index + 1} />) : null}
+      {businesses.length !== 0 ? businesses.map((business, index) => <BusinessCard business={business} index={index + 1} key={business.business_id} />) : null}
       </div>
     </div>
   );
