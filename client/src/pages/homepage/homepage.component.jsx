@@ -98,66 +98,68 @@ const HomePage = () => {
       <div className="DesktopBusinessList">
         {businesses.length !== 0 ? businesses.map((business, index) => <BusinessCard business={business} key={index + 1} />) : null}
       </div>
-      <div className="MapContainer">
-        <div className="MapControls">
-          <MapButton className="RadiusControls" 
-          image={
-            <SvgIcon viewBox="0 0 1024 1024" color="action" style={{fontSize: "30px"}}>
-              <path d= "
-              M512 85.333333c141.226667 0 256 113.493333 256 253.866667C768 
-              529.493333 512 810.666667 512 810.666667S256 529.493333 256 
-              339.2C256 198.826667 370.773333 85.333333 512 85.333333m0 
-              170.666667a85.333333 85.333333 0 0 0-85.333333 85.333333 
-              85.333333 85.333333 0 0 0 85.333333 85.333334 85.333333 
-              85.333333 0 0 0 85.333333-85.333334 85.333333 85.333333 0 0 
-              0-85.333333-85.333333m341.333333 554.666667c0 94.293333-152.746667
-              170.666667-341.333333 170.666666s-341.333333-76.373333-341.333333
-              -170.666666c0-55.04 52.053333-104.106667 
-              132.693333-135.253334l27.306667 38.826667C284.586667 733.44 256 
-              759.893333 256 789.333333c0 58.88 114.773333 106.666667 256 
-              106.666667s256-47.786667 256-106.666667c0-29.44-28.586667-55.893333
-              -74.666667-75.093333l27.306667-38.826667C801.28 706.56 853.333333 
-              755.626667 853.333333 810.666667z" />
-            </SvgIcon>}
-          >
-            <div style={{paddingLeft: "20px", paddingRight: "20px", paddingTop: "25px", overflow: "hidden"}}>
-              <Typography id="discrete-slider-restrict" gutterBottom>
-                Radius
-              </Typography>
-              <Slider
-                defaultValue={radius}
-                getAriaValueText={valuetext}
-                aria-labelledby="discrete-slider-small-steps"
-                step={1}
-                marks={marks}
-                min={1}
-                max={20}
-                valueLabelDisplay="auto"
-                style={{padding: "10px", width: "150px", height: "10px"}}
-                onChange={ (e, val) => setRadius(val) }  
-                onDragStop={ () => this.props.update(this.state.radius)}
-              />
-            </div>
-          </MapButton>
-          <MapButton className="FilterControls" image={<TuneIcon color="action"/>}>
-            <div style={{paddingLeft: "20px", paddingRight: "20px", paddingTop: "25px", overflowY: "hidden"}}>
-              <br />
-              <Slider
-                defaultValue={radius}
-                getAriaValueText={valuetext}
-                aria-labelledby="discrete-slider-small-steps"
-                step={5}
-                marks={marks}
-                min={5}
-                max={45}
-                valueLabelDisplay="auto"
-                style={{padding: "10px", width: "150px", height: "10px"}}
-              />
-            </div>
-          </MapButton>
+      {coords.lat && coords.lng && businesses.length !== 0 ? 
+        <div className="MapContainer">
+          <div className="MapControls">
+            <MapButton className="RadiusControls" 
+            image={
+              <SvgIcon viewBox="0 0 1024 1024" color="action" style={{fontSize: "30px"}}>
+                <path d= "
+                M512 85.333333c141.226667 0 256 113.493333 256 253.866667C768 
+                529.493333 512 810.666667 512 810.666667S256 529.493333 256 
+                339.2C256 198.826667 370.773333 85.333333 512 85.333333m0 
+                170.666667a85.333333 85.333333 0 0 0-85.333333 85.333333 
+                85.333333 85.333333 0 0 0 85.333333 85.333334 85.333333 
+                85.333333 0 0 0 85.333333-85.333334 85.333333 85.333333 0 0 
+                0-85.333333-85.333333m341.333333 554.666667c0 94.293333-152.746667
+                170.666667-341.333333 170.666666s-341.333333-76.373333-341.333333
+                -170.666666c0-55.04 52.053333-104.106667 
+                132.693333-135.253334l27.306667 38.826667C284.586667 733.44 256 
+                759.893333 256 789.333333c0 58.88 114.773333 106.666667 256 
+                106.666667s256-47.786667 256-106.666667c0-29.44-28.586667-55.893333
+                -74.666667-75.093333l27.306667-38.826667C801.28 706.56 853.333333 
+                755.626667 853.333333 810.666667z" />
+              </SvgIcon>}
+            >
+              <div style={{paddingLeft: "20px", paddingRight: "20px", paddingTop: "25px", overflow: "hidden"}}>
+                <Typography id="discrete-slider-restrict" gutterBottom>
+                  Radius
+                </Typography>
+                <Slider
+                  defaultValue={radius}
+                  getAriaValueText={valuetext}
+                  aria-labelledby="discrete-slider-small-steps"
+                  step={1}
+                  marks={marks}
+                  min={1}
+                  max={20}
+                  valueLabelDisplay="auto"
+                  style={{padding: "10px", width: "150px", height: "10px"}}
+                  onChange={ (e, val) => setRadius(val) }  
+                  onDragStop={ () => this.props.update(this.state.radius)}
+                />
+              </div>
+            </MapButton>
+            <MapButton className="FilterControls" image={<TuneIcon color="action"/>}>
+              <div style={{paddingLeft: "20px", paddingRight: "20px", paddingTop: "25px", overflowY: "hidden"}}>
+                <br />
+                <Slider
+                  defaultValue={radius}
+                  getAriaValueText={valuetext}
+                  aria-labelledby="discrete-slider-small-steps"
+                  step={5}
+                  marks={marks}
+                  min={5}
+                  max={45}
+                  valueLabelDisplay="auto"
+                  style={{padding: "10px", width: "150px", height: "10px"}}
+                />
+              </div>
+            </MapButton>
+          </div>
+          <DisplayMapFC coords={coords} businesses={businesses} />
         </div>
-        {coords.lat && coords.lng && businesses.length !== 0 ? <DisplayMapFC coords={coords} businesses={businesses} /> : null}
-      </div>
+      : null}
       <div className="MobileBusinessList">
       {businesses.length !== 0 ? businesses.map((business, index) => <BusinessCard business={business} key={index + 1} />) : null}
       </div>
