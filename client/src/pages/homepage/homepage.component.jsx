@@ -133,7 +133,7 @@ const HomePage = () => {
                   Radius {radius}
                 </Typography>
                 <Slider
-                  defaultValue={15}
+                  defaultValue={radius}
                   getAriaValueText={valuetext}
                   aria-labelledby="discrete-slider-small-steps"
                   step={1}
@@ -169,7 +169,7 @@ const HomePage = () => {
         </div>
       : null}
       <div className="MobileBusinessList">
-      {businesses.length !== 0 ? businesses.map((business, index) => <BusinessCard business={business} index={index + 1} key={business.business_id} />) : null}
+        {businesses.length !== 0 ? businesses.map((business, index) => <BusinessCard business={business} index={index + 1} key={business.business_id} />) : null}
       </div>
     </div>
   );
