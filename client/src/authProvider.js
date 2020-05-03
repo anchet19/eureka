@@ -21,7 +21,7 @@ export const getInitialState = () => {
 
   // Check if a token exists in localStorage and attempt to load the data
   if (typeof localStorage !== "undefined") {
-    const token = localStorage.getItem("jwt");
+    const token = localStorage.getItem("eurekajwt");
     const decoded = token ? jwt.decode(token) : "{}"
     stored_state = {
       user: decoded,
@@ -45,7 +45,7 @@ export const AuthContext = React.createContext({
 export const AuthProvider = ({ children }) => {
 
   const [state, dispatch] = useReducer(authReducer, getInitialState())
-
+  console.log(state)
   return (
     <AuthContext.Provider value={[state, dispatch]}>
       {children}

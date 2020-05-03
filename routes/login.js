@@ -35,7 +35,6 @@ router.post('/', [
           const sql3 = 'SELECT business_id as bid, name from businesses where owner_id = ?'
           db.query(sql3, [user_id], (err, results) => {
             const businesses = results
-            console.log(results);
             // create token and send response
             jwt.sign({ uid: user_id, businesses: businesses }, process.env.JWT_SECRET, (err, token) => {
               if (err) { return response.json({ error: err }) }

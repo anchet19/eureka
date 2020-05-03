@@ -25,7 +25,6 @@ export const useAuth = () => {
   const login = (username, password) => {
     axios.post('/login', { username, password })
       .then(res => {
-        console.log(res.data);
         const { error, token } = res.data
         if (token) {
           dispatch({

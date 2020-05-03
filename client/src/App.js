@@ -1,6 +1,8 @@
-import React, { createContext } from 'react';
+import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import CssBaseline from '@material-ui/core/CssBaseline'
+import { MuiPickersUtilsProvider } from '@material-ui/pickers'
+import MomentUtils from '@date-io/moment'
 import './App.css';
 
 import HomePage from './pages/homepage/homepage.component';
@@ -17,26 +19,29 @@ import { useAuth } from './hooks/useAuth'
 const App = () => {
   const { isAuthenticated } = useAuth()
   return (
-    <div>
-      <CssBaseline />
-      <Header />
-      <Switch>
-        <Route exact path="/" component={HomePage} />
-        <Route exact path="/about" component={AboutPage} />
-        <Route path="/account/:display_name" component={AccountPage} />
-        <Route path="/details/:bid" component={DetailsPage} />
-        <Route
-          exact
-          path="/login"
-          render={() => isAuthenticated() ? <Redirect to='/' /> : <LoginPage />}
-        />
-        <Route exact path="/accounts/users" component={UserRegistrationPage} />
-        <Route exact path="/accounts/businesses" component={BusinessRegistrationPage} />
-        <Route component={() => (
-          <h1> Oops! Page not found!</h1>
-        )} />
-      </Switch>
-    </div>
+    <MuiPickersUtilsProvider utils={MomentUtils}>
+      <div style={{ overflowX: 'hidden' }}>
+        <CssBaseline />
+        <Header />
+        <Switch>
+          <Route exact path="/" component={HomePage} />
+          <Route exact path="/about" component={AboutPage} />
+          <Route path="/details/:bid" component={DetailsPage} />
+          <Route
+            exact
+            path="/login"
+            render={() => isAuthenticated() ? <Redirect to='/' /> : <LoginPage />}
+          />
+          <Route exact path="/accounts/users" component={UserRegistrationPage} />
+          <Route exact path="/accounts/businesses" component={BusinessRegistrationPage} />
+          <Route path="/accounts/businesses/:bid" component={AccountPage} />
+          <Route component={() => (
+            <h1> Oops! Page not found!</h1>
+          )} />
+        </Switch>
+
+      </div>
+    </MuiPickersUtilsProvider>
   );
 }
 

@@ -66,7 +66,9 @@ class UserRegistration extends Component {
     matches ? alert("MATCHED") : alert("NO MATCH");
 
     // Post data to '/accounts/users' if passwords match
+
     if(matches) {
+
       const user = {
         username: this.state.username,
         password: this.state.password,
@@ -76,14 +78,26 @@ class UserRegistration extends Component {
       };
 
       console.log(user);
+
+
+
+      axios.post('http://localhost:5000/api/v1/accounts/users', { ...user })
+
         
       /*
         axios.post('http://localhost:5000/api/v1/accounts/users', { user })
+
         .then(result => {
           console.log(result);
           console.log(result.data);
         })
+
+        .catch(err => {
+          console.log(err);
+        })
+
       */
+
 
     }
 
@@ -92,6 +106,7 @@ class UserRegistration extends Component {
   render() {
     return (
       <div className="center">
+
 
       <h1 className="titleCenter">User Registration</h1>
 
@@ -127,6 +142,7 @@ class UserRegistration extends Component {
     </form>
 
     </div>
+
     );
   }
 }

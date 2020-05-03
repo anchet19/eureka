@@ -22,7 +22,6 @@ const LoginInput = () => {
   const handleSubmit = e => {
     e.preventDefault();
     login(username, password)
-    console.log(state);
   }
   return (
     <div className="center">
