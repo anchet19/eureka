@@ -1,0 +1,147 @@
+/*
+    @author Mateusz Koza
+    Created css style sheet for only the details page.
+*/
+
+/*
+body{
+  //background: url(https://www.itl.cat/pngfile/big/157-1572191_hd-wallpapers-for-website-background-cool-background-image.jpg);
+}
+*/
+
+.main-card {
+    max-width: 700px;
+    min-width: 700px;
+    max-height: 550px;
+    min-height: 550px;
+    position: relative;
+    margin: auto;
+}
+
+/* Button styles on the main business info card */
+.main-buttons {
+  max-width: 12rem;
+}
+
+.carousel-card {
+  max-width: 90rem;
+  margin-left: 13%;
+  padding-bottom: 5px;
+  max-height: 17rem;
+  margin-top: 1rem;
+}
+
+/* Controls the image carousel content */
+.border-carousel {
+    margin-bottom: 10rem;
+    margin-top: 3rem;
+    max-width: 70rem;
+  }
+
+/* Control the max size of carousel images */
+.image-style {
+  max-height: 180px;
+  min-height: 180px;
+  max-width: 250px;
+  object-fit: fill;
+}
+
+/* Provides a less jammed space if no images are available */
+.no-images {
+  margin-bottom: 6rem;
+  margin-top: 6rem;
+}
+
+/* Center all the contents on the page */
+.col-centered {
+    float: none;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+.card-hours {
+  max-width: 450px;
+  min-width: 450px;
+  max-height: 250px;
+  min-height: 250px;
+  margin-bottom: 5rem;
+  position: absolute;
+  margin: auto;
+  margin-left: 5rem;
+}
+
+.card-description {
+  max-width: 450px;
+  min-width: 450px;
+  max-height: 250px;
+  min-height: 250px;
+  margin-bottom: 5rem;
+  position: absolute;
+  margin: auto;
+  margin-left: 5rem;
+  margin-top: 18.75rem;
+}
+
+.card-deals {
+  max-width: 450px;
+  min-width: 450px;
+  max-height: 250px;
+  min-height: 250px;
+  margin-bottom: 5rem;
+  position: absolute;
+  margin: auto;
+  margin-left: 87rem;
+}
+
+.card-promos {
+  max-width: 450px;
+  min-width: 450px;
+  max-height: 250px;
+  min-height: 250px;
+  margin-bottom: 5rem;
+  position: absolute;
+  margin: auto;
+  margin-left: 87rem;
+  margin-top: 18.75rem;
+}
+
+/* Controls 'Business Hours','Deals','Promos' cards */
+.card-style {
+      max-width: 500px;
+      min-width: 500px;
+      max-height: 250px;
+      min-height: 250px;
+      margin-bottom: 5rem;
+      position: relative;
+      margin: auto;
+  }
+
+/* Mobile content */
+@media only screen and (max-width: 600px) {
+  .main-card {
+    max-width: 95%;
+    min-width: 95%;
+    max-height: 550px;
+    min-height: 550px;
+    position: relative;
+    margin: auto;
+  }
+  .card-style {
+    max-width: 350px;
+    min-width: 350px;
+    max-height: 150px;
+    min-height: 150px;
+    margin-bottom: 5rem;
+    position: relative;
+    margin: auto;
+  }
+  .border-carousel {
+    margin-bottom: 10rem;
+    margin-top: 3rem;
+    max-width: 20rem;
+  }
+  .no-images {
+    margin-bottom: 6rem;
+    margin-top: 6rem;
+  }
+}
