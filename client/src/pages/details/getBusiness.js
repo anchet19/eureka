@@ -13,9 +13,7 @@ import axios from 'axios'
 import { withRouter } from 'react-router-dom';
 
 import Slider from 'infinite-react-carousel';
-import { Card, CardContent, Typography, Fab, GridList, CardHeader, Button } from '@material-ui/core';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+import { Card, CardContent, Typography, Fab, Button } from '@material-ui/core';
 import NavigationIcon from '@material-ui/icons/Navigation';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import CallIcon from '@material-ui/icons/Call';
@@ -34,12 +32,6 @@ const isMobile = width <= mobileWidth;
 
 let counter = 0;
 
-// Example mock data only for phone number and tags
-let business = {
-  phone: "(609) 456-7890",
-  tags: "American, Pub",
-}
-
 class GetBusiness extends React.Component {
 
       constructor(props) {
@@ -52,6 +44,8 @@ class GetBusiness extends React.Component {
               bid: null,
               name: '',
               address: '',
+              phone: null,
+              tags: null,
               hours: null,
               limited: null,
               recurring: null,
@@ -95,6 +89,12 @@ class GetBusiness extends React.Component {
             // Business Address for address field and for navigation
             this.setState({ address: this.state.business.info.address });
 
+            // Business Phone Number so a user can call if they please
+            this.setState({ phone: this.state.business.info.phone });
+
+            // Business Tags so a user can determine if the style presented interests them
+            this.setState({ tags: this.state.business.info.tags });
+
             // Business Images to show through Image Carousel
             this.setState({ images: this.state.business.images });
 
@@ -102,8 +102,8 @@ class GetBusiness extends React.Component {
             this.setState({ imgCount: this.state.business.images.length });
 
             // Business Menu path to provide for the clickable pdf link
-            //this.setState({ menu: this.state.business.info.menu }); // Actual access to Business Menu
-            this.setState({ menu: "https://senior-project-eureka.s3.amazonaws.com/94/menus/1587321188585.pdf" });
+            this.setState({ menu: this.state.business.info.menu }); // Actual access to Business Menu
+            //this.setState({ menu: "https://senior-project-eureka.s3.amazonaws.com/94/menus/1587321188585.pdf" });
 
             // Business Hours to display in a list all available times
             this.setState({ hours: this.state.business.hours });
@@ -239,16 +239,23 @@ class GetBusiness extends React.Component {
           slidesToShow
         };
       
-        return(
-          <div className="col-centered">
-            <br/>
-            <Card className="card-hours">
-                <CardContent>
-                  <Typography variant="h5" component="h2">
+  return(
+  
+  <div className="col-centered">
+
+  {/* Change the layout based on desktop or mobile */}
+  {!isMobile ?
+
+    <div class="card-grid">
+
+      <div class="card-item">
+
+        <Card className="card-info">
+            <CardContent>
+                  <Typography variant="h6" component="h2">
                     <AccessTimeIcon />
                     &nbsp;Business Hours
                   </Typography>
-                  <br/><br/>
                   {this.state.hours ?
                   <Typography variant="body1" component="p">
                   
@@ -262,75 +269,14 @@ class GetBusiness extends React.Component {
                     No hours available.
                   </Typography>
                   }
-                </CardContent>
-              </Card>
-
-              <Card className="card-description">
-                <CardContent>
-                  <Typography variant="h6" component="h2">
-                    Description
-                  </Typography>
-                  <br/>
-                  {this.state.description ?
-                  <Typography variant="body1" component="p">
-                    {this.state.description}
-                  </Typography>
-                  :
-                  <Typography variant="body1" component="p">
-                    No description available.
-                  </Typography>
-                  }
-                </CardContent>
-              </Card>
-
-              <Card className="card-deals">
-                <CardContent>
-                  <Typography variant="h5" component="h2">
-                    <MonetizationOnIcon />
-                    &nbsp;Deals
-                  </Typography>
-                  <br/>
-                  {this.state.recurring ?
-                  <Typography variant="body1" component="p">
-
-                    {this.state.recurring.map(({weekday, start_time, end_time, description}) => (
-                      <li>{weekday + " - Starts: " + start_time + " | Ends: " + end_time + " * " + description}</li>
-                    ))}
-
-                  </Typography>
-                  :
-                  <Typography variant="body1" component="p">
-                    No deals available.
-                  </Typography>
-                  }
-                </CardContent>
-              </Card>
-
-              <Card className="card-promos">
-                <CardContent>
-                  <Typography variant="h5" component="h2">
-                    <StarsIcon />
-                    &nbsp;Promos
-                  </Typography>
-                  <br/>
-                  {this.state.limited ?
-                  <Typography variant="body1" component="p">
-                  
-                    {this.state.limited.map(({start_datetime, end_datetime, description}) => (
-                      <li>{"Starts: " + start_datetime + " | Ends: " + end_datetime}</li>
-                    ))}
-
-                  </Typography>
-                  :
-                  <Typography variant="body1" component="p">
-                    No promos available.
-                  </Typography>
-                  }
-                </CardContent>
-              </Card>
-
-            <Card className="main-card">
-              <CardContent>
+            </CardContent>
+        </Card>
+      </div>
+      
+      <div class="itemMain">
+        
+        <Card className="main-card">
+            <CardContent>
               <br/>
                 <Typography gutterBottom variant="h3" component="h2"  >
                   {this.state.name}
@@ -365,7 +311,9 @@ class GetBusiness extends React.Component {
                       Phone Number
                     </Button>
                   </div>
-                  {business.phone}
+                  {this.state.phone ?
+                    this.state.phone : "No phone number available."
+                  }
                 </Typography>
                 <br/>
                 <Typography variant="subtitle1" color="textPrimary" component="p">
@@ -381,7 +329,197 @@ class GetBusiness extends React.Component {
                       Tags
                     </Button>
                   </div>
-                  {business.tags}
+                  {this.state.tags ?
+                    this.state.tags : "No tags available."
+                  }
+                </Typography>
+                <br/>
+                <div>
+                  <Button
+                      variant="outlined"
+                      color="primary"
+                      className="main-buttons"
+                      startIcon={<LocalDiningIcon />}
+                      size="small"
+                      disableElevation="true"
+                    >
+                      Menu
+                    </Button>
+                    <h3><a href={this.state.menu} target="_blank" rel="noopener noreferrer">Menu</a></h3>
+                </div>
+                <br/>
+
+                <a href="/#" onClick={this.handleOpen}>
+                <Fab color="primary" variant="extended" size="large">
+                  <NavigationIcon />
+                    Navigate
+                    </Fab>
+                </a>
+
+            </CardContent>
+            <br />
+        </Card>
+      </div>
+      <div class="card-item">
+  
+        <Card className="card-info">
+            <CardContent>
+                  <Typography variant="h6" component="h2">
+                    Description
+                  </Typography>
+                  {this.state.description ?
+                  <Typography variant="body1" component="p">
+                    {this.state.description}
+                  </Typography>
+                  :
+                  <Typography variant="body1" component="p">
+                    No description available.
+                  </Typography>
+                  }
+            </CardContent>
+        </Card>
+      </div>
+      <div class="card-item">
+  
+        <Card className="card-info">
+            <CardContent>
+                  <Typography variant="h6" component="h2">
+                    <MonetizationOnIcon />
+                    &nbsp;Deals
+                  </Typography>
+                  {this.state.recurring ?
+                  <Typography variant="body1" component="p">
+
+                    {this.state.recurring.map(({weekday, start_time, end_time, description}) => (
+                      <li>{weekday + " - Starts: " + start_time + " | Ends: " + end_time + " * " + description}</li>
+                    ))}
+
+                  </Typography>
+                  :
+                  <Typography variant="body1" component="p">
+                    No deals available.
+                  </Typography>
+                  }
+            </CardContent>
+        </Card>
+      </div>  
+      <div class="card-item">
+  
+        <Card className="card-info">
+            <CardContent>
+                  <Typography variant="h6" component="h2">
+                    <StarsIcon />
+                    &nbsp;Promos
+                  </Typography>
+                  {this.state.limited ?
+                  <Typography variant="body1" component="p">
+                  
+                    {this.state.limited.map(({start_datetime, end_datetime, description}) => (
+                      <li>{"Starts: " + start_datetime + " | Ends: " + end_datetime}</li>
+                    ))}
+
+                  </Typography>
+                  :
+                  <Typography variant="body1" component="p">
+                    No promos available.
+                  </Typography>
+                  }
+            </CardContent>
+        </Card>
+      </div>
+      <div class="itemImages">
+  
+        <Card className="carousel-card">
+            {this.state.images ? 
+          
+              <div>
+                <div className="border-carousel">
+                <span></span>
+                <Slider {...settings}>
+
+                  {this.state.images.map(({name, path}) => {
+                    return (
+                      <div>
+                        {<img className="image-style" src={ path } alt={ name } />}
+                      </div>
+                    )
+                  })}
+
+                </Slider>
+                </div >
+              </div> : 
+
+              <div className="no-images">
+                <h2>No images available.</h2>
+              </div> }
+        </Card>
+      </div>
+
+</div>
+
+:
+
+<div class="card-grid">
+  
+  <div class="itemMain">
+    
+    <Card className="main-card">
+        <CardContent>
+                <br/>
+                <Typography gutterBottom variant="h3" component="h2"  >
+                  {this.state.name}
+                </Typography>
+                <br/>
+                <Typography variant="subtitle1" color="textPrimary" component="p">
+                  <div>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      className="main-buttons"
+                      startIcon={<LocationOnIcon />}
+                      size="small"
+                      disableElevation='true'
+                    >
+                      Location
+                    </Button>
+                  </div>
+                  {this.state.address}
+                </Typography>
+                <br/>
+                <Typography variant="subtitle1" color="textPrimary" component="p">
+                  <div>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      className="main-buttons"
+                      startIcon={<CallIcon />}
+                      size="small"
+                      disableElevation="true"
+                    >
+                      Phone Number
+                    </Button>
+                  </div>
+                  {this.state.phone ?
+                    this.state.phone : "No phone number available."
+                  }
+                </Typography>
+                <br/>
+                <Typography variant="subtitle1" color="textPrimary" component="p">
+                  <div>
+                  <Button
+                      variant="outlined"
+                      color="primary"
+                      className="main-buttons"
+                      startIcon={<LocalDiningIcon />}
+                      size="small"
+                      disableElevation="true"
+                    >
+                      Tags
+                    </Button>
+                  </div>
+                  {this.state.tags ?
+                    this.state.tags : "No tags available."
+                  }
                 </Typography>
                 <br/>
                 <div>
@@ -409,8 +547,11 @@ class GetBusiness extends React.Component {
               </CardContent>
               <br />
             </Card>
-
-            <Card className="carousel-card">
+    </div>
+    <div class="itemImages">
+  
+      <Card>
+            
             {this.state.images ? 
           
               <div>
@@ -433,11 +574,107 @@ class GetBusiness extends React.Component {
               <div className="no-images">
                 <h2>No images available.</h2>
               </div> }
-              </Card>
+      </Card>
+    </div>
+    <div class="card-item">
 
-          </div>
+      <Card className="card-info">
+          <CardContent>
+                  <Typography variant="h6" component="h2">
+                    <AccessTimeIcon />
+                    &nbsp;Business Hours
+                  </Typography>
+                  {this.state.hours ?
+                  <Typography variant="body1" component="p">
+                  
+                    {this.state.hours.map(({weekday, open_time, closing_time}) => (
+                      <li>{weekday + " - Opens: " + open_time + " | Closes:  " + closing_time}</li>
+                    ))}
+                  
+                  </Typography>
+                  :
+                  <Typography variant="body1" component="p">
+                    No hours available.
+                  </Typography>
+                  }
+          </CardContent>
+      </Card>
+    </div>
+    <div class="card-item">
+
+        <Card className="card-info">
+            <CardContent>
+                  <Typography variant="h6" component="h2">
+                    Description
+                  </Typography>
+                  {this.state.description ?
+                  <Typography variant="body1" component="p">
+                    {this.state.description}
+                  </Typography>
+                  :
+                  <Typography variant="body1" component="p">
+                    No description available.
+                  </Typography>
+                  }
+            </CardContent>
+        </Card>
+    </div>
+    <div class="card-item">
+  
+        <Card className="card-info">
+            <CardContent>
+                  <Typography variant="h6" component="h2">
+                    <MonetizationOnIcon />
+                    &nbsp;Deals
+                  </Typography>
+                  {this.state.recurring ?
+                  <Typography variant="body1" component="p">
+
+                    {this.state.recurring.map(({weekday, start_time, end_time, description}) => (
+                      <li>{weekday + " - Starts: " + start_time + " | Ends: " + end_time + " * " + description}</li>
+                    ))}
+
+                  </Typography>
+                  :
+                  <Typography variant="body1" component="p">
+                    No deals available.
+                  </Typography>
+                  }
+            </CardContent>
+        </Card>
+      </div>  
+      <div class="card-item">
+  
+        <Card className="card-info">
+            <CardContent>
+                  <Typography variant="h6" component="h2">
+                    <StarsIcon />
+                    &nbsp;Promos
+                  </Typography>
+                  {this.state.limited ?
+                  <Typography variant="body1" component="p">
+                  
+                    {this.state.limited.map(({start_datetime, end_datetime, description}) => (
+                      <li>{"Starts: " + start_datetime + " | Ends: " + end_datetime}</li>
+                    ))}
+
+                  </Typography>
+                  :
+                  <Typography variant="body1" component="p">
+                    No promos available.
+                  </Typography>
+                  }
+            </CardContent>
+        </Card>
+      </div>
+
+    </div>
+    
+    }
+
+</div>
           )
-      }
+    }
 }
 
 export default withRouter(GetBusiness);
