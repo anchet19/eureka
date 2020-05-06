@@ -10,14 +10,6 @@ const AccountPage = () => {
   const { user } = useAuth()
   const { bid } = useParams();
   const [connected, setConnected] = useState(false)
-  useEffect(() => {
-    const fetchAccount = async () => {
-      const response = await axios.get(`/api/v1/accounts/businesses/${bid}`);
-      setConnected(response.data);
-    }
-
-    // fetchAccount();
-  }, [bid])
 
   return (
     <Container maxWidth='md'>
