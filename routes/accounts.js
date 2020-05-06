@@ -164,7 +164,7 @@ router.post(
             if (deals) {
               deals = await JSON.parse(request.body.deals)
               let sql4 = ''
-              deals.forEach(({ description, day, starts, ends, }) => {
+              deals.forEach(({ description, day, starts, ends }) => {
                 if (day) {
                   sql4 = 'CALL insertDeal(?,?,"Recurring",?,?,?,null,null)'
                 } else {
@@ -206,6 +206,34 @@ router.get('/businesses/:business_id', checkToken, async (request, response) => 
   // send back info for a particular business based on their unique business id
   const { business_id } = request.params
   const result = await getBusinessDetails(business_id)
+  // split the string to get street and city
+  const [street, city, rest] = result.info.address.split(', ')
+  // state and zip are not separated by a comma so they must be split as a separate action
+  const [state, zip] = rest.split(' ')
+  // reconstruct the address to have the format we need in our response
+  result.info.address = {
+    street: street,
+    city: city,
+    state: state,
+    zip: zip
+  }
+  result.deals.limited = result.deals.limited.map(deal => ({
+    day: deal.weekday,
+    description: deal.description,
+    starts: deal.start_time || deal.start_datetime,
+    ends: deal.end_time || deal.end_datetime
+  }))
+  result.deals.recurring = result.deals.recurring.map(deal => ({
+    day: deal.weekday,
+    description: deal.description,
+    starts: deal.start_time || deal.start_datetime,
+    ends: deal.end_time || deal.end_datetime
+  }))
+  result.hours = result.hours.map(item => ({
+    day: item.weekday,
+    starts: item.open_time,
+    ends: item.closing_time
+  }))
   response.json(result)
 })
 
