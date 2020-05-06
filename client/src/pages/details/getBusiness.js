@@ -32,6 +32,8 @@ const isMobile = width <= mobileWidth;
 
 let counter = 0;
 
+var moment = require('moment');
+
 // Example mock data only for phone number and tags
 let business = {
   phone: "(609) 456-7890",
@@ -265,7 +267,8 @@ class GetBusiness extends React.Component {
                   <Typography variant="body1" component="p">
                   
                     {this.state.hours.map(({weekday, open_time, closing_time}) => (
-                      <li>{weekday + " - Opens: " + open_time + " | Closes:  " + closing_time}</li>
+                      <li>{weekday + " - Opens: " + moment(open_time, ["hh:mm:ss"]).format("hh:mm:ss A") + 
+                                     " | Closes:  " + moment(closing_time, ["hh:mm:ss"]).format("hh:mm:ss A")}</li>
                     ))}
                   
                   </Typography>
@@ -396,7 +399,8 @@ class GetBusiness extends React.Component {
                   <Typography variant="body1" component="p">
 
                     {this.state.recurring.map(({weekday, start_time, end_time, description}) => (
-                      <li>{weekday + " - Starts: " + start_time + " | Ends: " + end_time + " * " + description}</li>
+                      <li>{weekday + " - Starts: " + moment(start_time, ["hh:mm:ss"]).format("hh:mm:ss A") + 
+                      " | Ends: " + moment(end_time, ["hh:mm:ss"]).format("hh:mm:ss A") + " * " + description}</li>
                     ))}
 
                   </Typography>
@@ -420,7 +424,8 @@ class GetBusiness extends React.Component {
                   <Typography variant="body1" component="p">
                   
                     {this.state.limited.map(({start_datetime, end_datetime, description}) => (
-                      <li>{"Starts: " + start_datetime + " | Ends: " + end_datetime}</li>
+                      <li>{"Starts: " + moment(start_datetime, "YYYY-MM-DDTHH:mm:ss.SSSZ").format("dd, MM-DD-YYYY hh:mm:ss A") + 
+                      " | Ends: " + moment(end_datetime, "YYYY-MM-DDTHH:mm:ss.SSSZ").format("dd, MM-DD-YYYY hh:mm:ss A")}</li>
                     ))}
 
                   </Typography>
@@ -589,8 +594,9 @@ class GetBusiness extends React.Component {
                   {this.state.hours ?
                   <Typography variant="body1" component="p">
                   
-                    {this.state.hours.map(({weekday, open_time, closing_time}) => (
-                      <li>{weekday + " - Opens: " + open_time + " | Closes:  " + closing_time}</li>
+                  {this.state.hours.map(({weekday, open_time, closing_time}) => (
+                      <li>{weekday + " - Opens: " + moment(open_time, ["hh:mm:ss"]).format("hh:mm:ss A") + 
+                                     " | Closes:  " + moment(closing_time, ["hh:mm:ss"]).format("hh:mm:ss A")}</li>
                     ))}
                   
                   </Typography>
@@ -633,7 +639,8 @@ class GetBusiness extends React.Component {
                   <Typography variant="body1" component="p">
 
                     {this.state.recurring.map(({weekday, start_time, end_time, description}) => (
-                      <li>{weekday + " - Starts: " + start_time + " | Ends: " + end_time + " * " + description}</li>
+                      <li>{weekday + " - Starts: " + moment(start_time, ["hh:mm:ss"]).format("hh:mm:ss A") + 
+                      " | Ends: " + moment(end_time, ["hh:mm:ss"]).format("hh:mm:ss A") + " * " + description}</li>
                     ))}
 
                   </Typography>
@@ -657,7 +664,8 @@ class GetBusiness extends React.Component {
                   <Typography variant="body1" component="p">
                   
                     {this.state.limited.map(({start_datetime, end_datetime, description}) => (
-                      <li>{"Starts: " + start_datetime + " | Ends: " + end_datetime}</li>
+                      <li>{"Starts: " + moment(start_datetime, "YYYY-MM-DDTHH:mm:ss.SSSZ").format("dd, MM-DD-YYYY hh:mm:ss A") + 
+                      " | Ends: " + moment(end_datetime, "YYYY-MM-DDTHH:mm:ss.SSSZ").format("dd, MM-DD-YYYY hh:mm:ss A")}</li>
                     ))}
 
                   </Typography>
