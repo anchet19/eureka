@@ -32,6 +32,12 @@ const isMobile = width <= mobileWidth;
 
 let counter = 0;
 
+// Example mock data only for phone number and tags
+let business = {
+  phone: "(609) 456-7890",
+  tags: "American, Pub",
+}
+
 class GetBusiness extends React.Component {
 
       constructor(props) {
@@ -239,9 +245,8 @@ class GetBusiness extends React.Component {
           slidesToShow
         };
       
-  return(
-  
-  <div className="col-centered">
+        return(
+          <div className="col-centered">
 
   {/* Change the layout based on desktop or mobile */}
   {!isMobile ?
@@ -460,6 +465,35 @@ class GetBusiness extends React.Component {
 :
 
 <div class="card-grid">
+
+<div class="itemImages">
+  
+    <Card>
+        
+        {this.state.images ? 
+      
+          <div>
+            <div className="border-carousel">
+            <span></span>
+            <Slider {...settings}>
+
+              {this.state.images.map(({name, path}) => {
+                return (
+                  <div>
+                    {<img className="image-style" src={ path } alt={ name } />}
+                  </div>
+                )
+              })}
+
+            </Slider>
+            </div >
+          </div> : 
+
+          <div className="no-images">
+            <h2>No images available.</h2>
+          </div> }
+    </Card>
+  </div>
   
   <div class="itemMain">
     
@@ -499,9 +533,7 @@ class GetBusiness extends React.Component {
                       Phone Number
                     </Button>
                   </div>
-                  {this.state.phone ?
-                    this.state.phone : "No phone number available."
-                  }
+                  {business.phone}
                 </Typography>
                 <br/>
                 <Typography variant="subtitle1" color="textPrimary" component="p">
@@ -517,9 +549,7 @@ class GetBusiness extends React.Component {
                       Tags
                     </Button>
                   </div>
-                  {this.state.tags ?
-                    this.state.tags : "No tags available."
-                  }
+                  {business.tags}
                 </Typography>
                 <br/>
                 <div>
@@ -547,34 +577,6 @@ class GetBusiness extends React.Component {
               </CardContent>
               <br />
             </Card>
-    </div>
-    <div class="itemImages">
-  
-      <Card>
-            
-            {this.state.images ? 
-          
-              <div>
-                <div className="border-carousel">
-                <span></span>
-                <Slider {...settings}>
-
-                  {this.state.images.map(({name, path}) => {
-                    return (
-                      <div>
-                        {<img className="image-style" src={ path } alt={ name } />}
-                      </div>
-                    )
-                  })}
-
-                </Slider>
-                </div >
-              </div> : 
-
-              <div className="no-images">
-                <h2>No images available.</h2>
-              </div> }
-      </Card>
     </div>
     <div class="card-item">
 
