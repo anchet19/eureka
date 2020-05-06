@@ -3,17 +3,43 @@
     Created css style sheet for only the details page.
 */
 
-/*
-body{
-  //background: url(https://www.itl.cat/pngfile/big/157-1572191_hd-wallpapers-for-website-background-cool-background-image.jpg);
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background-color: rgb(255, 255, 255);
+  padding: 10px;
+  grid-gap: 10px 10px;
 }
-*/
+
+.card-item {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 0.5px solid rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  font-size: 30px;
+  text-align: center;
+  min-width: 100%;
+  max-width: 100%;
+  min-height: 17rem;
+  max-height: 17rem;
+}
+
+.itemMain {
+  border: 0.5px solid rgba(0, 0, 0, 0.8);
+  grid-column-start: 2;
+  grid-column-end: 3;
+  grid-row-start: 1;
+  grid-row-end: 3;
+}
+
+.itemImages {
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  grid-row-start: 3;
+  grid-row-end: 3;
+  grid-column-start: 1;
+  grid-column-end: 4;
+}
 
 .main-card {
-    max-width: 700px;
-    min-width: 700px;
-    max-height: 550px;
-    min-height: 550px;
     position: relative;
     margin: auto;
 }
@@ -24,11 +50,7 @@ body{
 }
 
 .carousel-card {
-  max-width: 90rem;
-  margin-left: 13%;
-  padding-bottom: 5px;
-  max-height: 17rem;
-  margin-top: 1rem;
+  max-width: 100%;
 }
 
 /* Controls the image carousel content */
@@ -36,6 +58,8 @@ body{
     margin-bottom: 10rem;
     margin-top: 3rem;
     max-width: 70rem;
+    min-height: 4.5rem;
+    max-height: 4.5rem;
   }
 
 /* Control the max size of carousel images */
@@ -59,50 +83,10 @@ body{
     text-align: center;
   }
 
-.card-hours {
-  max-width: 450px;
-  min-width: 450px;
-  max-height: 250px;
-  min-height: 250px;
-  margin-bottom: 5rem;
-  position: absolute;
-  margin: auto;
-  margin-left: 5rem;
-}
-
-.card-description {
-  max-width: 450px;
-  min-width: 450px;
-  max-height: 250px;
-  min-height: 250px;
-  margin-bottom: 5rem;
-  position: absolute;
-  margin: auto;
-  margin-left: 5rem;
-  margin-top: 18.75rem;
-}
-
-.card-deals {
-  max-width: 450px;
-  min-width: 450px;
-  max-height: 250px;
-  min-height: 250px;
-  margin-bottom: 5rem;
-  position: absolute;
-  margin: auto;
-  margin-left: 87rem;
-}
-
-.card-promos {
-  max-width: 450px;
-  min-width: 450px;
-  max-height: 250px;
-  min-height: 250px;
-  margin-bottom: 5rem;
-  position: absolute;
-  margin: auto;
-  margin-left: 87rem;
-  margin-top: 18.75rem;
+.card-info {
+  max-height: 15rem;
+  min-height: 15rem;
+  margin-top: -5px;
 }
 
 /* Controls 'Business Hours','Deals','Promos' cards */
@@ -119,12 +103,7 @@ body{
 /* Mobile content */
 @media only screen and (max-width: 600px) {
   .main-card {
-    max-width: 95%;
-    min-width: 95%;
-    max-height: 550px;
-    min-height: 550px;
-    position: relative;
-    margin: auto;
+    margin-left: 0rem;
   }
   .card-style {
     max-width: 350px;
@@ -136,12 +115,44 @@ body{
     margin: auto;
   }
   .border-carousel {
-    margin-bottom: 10rem;
-    margin-top: 3rem;
-    max-width: 20rem;
+
+    margin-top: 50px;
+    margin-bottom: 10px;
+    max-width: 30rem;
+    min-height: 20rem;
+    max-height: 20rem;
   }
   .no-images {
     margin-bottom: 6rem;
     margin-top: 6rem;
+  }
+  .card-grid {
+    display: inline-block;
+    grid-template-columns: 1;
+    background-color: white;
+    padding: 1px;
+    grid-gap: 1px 1px;
+  }
+  
+  .card-item {
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.8);
+    text-align: center;
+  }
+  
+  .itemMain {
+    grid-row-start: 1;
+    grid-row-end: 4;
+  }
+  
+  .itemImages {
+    grid-row-start: 4;
+    grid-row-end: 5;
+  }
+
+  .card-info {
+    max-height: 15rem;
+    min-height: 15rem;
+    margin-top: -10px;
   }
 }
