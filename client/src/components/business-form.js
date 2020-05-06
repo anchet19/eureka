@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 import { useHistory } from 'react-router-dom'
 import Img from 'react-image'
 import {
@@ -18,7 +19,7 @@ import {
 } from '@material-ui/core';
 
 import DayEventList from './day-event-list'
-import axios from 'axios';
+
 
 /**
  * TextField wrapper that applies some default styles
@@ -30,27 +31,24 @@ const OutlinedTextField = (props) => (
     style={{ paddingRight: '8px' }}
     margin='dense'
     variant='outlined'
+  // InputLabelProps={{ shrink: true }}
   // required={props.notRequired ? false : true}
   />
 )
 
 
-/**
- * 
- * @todo Add input for menu: single pdf. Add input multiple images, 5 max.
- */
 const BusinessForm = (props) => {
   const history = useHistory()
   const [error, setError] = useState()
   // Values for form data and form default state
-  const [name, setName] = useState()
-  const [street, setStreet] = useState()
-  const [city, setCity] = useState()
-  const [state, setState] = useState()
-  const [zip, setZip] = useState()
-  const [tel, setTel] = useState()
+  const [name, setName] = useState('')
+  const [street, setStreet] = useState('')
+  const [city, setCity] = useState('')
+  const [state, setState] = useState('')
+  const [zip, setZip] = useState('')
+  const [tel, setTel] = useState('')
   const [hours, setHours] = useState([])
-  const [description, setDescription] = useState()
+  const [description, setDescription] = useState('')
   const [cuisine, setCuisine] = useState()
   // combine these into a "deals" array when submitting
   const [recurringDeals, setRecurringDeals] = useState([])
@@ -58,6 +56,38 @@ const BusinessForm = (props) => {
 
   const [menu, setMenu] = useState()
   const [photos, setPhotos] = useState([])
+
+  useEffect(() => {
+    loadBusinessData()
+  }, [props.bid])
+
+  const loadBusinessData = () => {
+    axios.get(`http://localhost:3000/api/v1/accounts/businesses/${props.bid}`,
+      { headers: { Authorization: `Bearer ${localStorage.getItem('eurekajwt')}` } })
+      .then(response => {
+        console.log(response.data.info);
+        const { name, address: { street, city, state, zip }, tel, menu, description } = response.data.info
+        const images = response.data.images
+        const { limited, recurring } = response.data.deals
+        const hours = response.data.hours
+        setName(name)
+        setStreet(street)
+        setCity(city)
+        setState(state)
+        setZip(zip)
+        setTel(tel)
+        setMenu(menu)
+        setDescription(description)
+        setPhotos(images)
+        setHours(hours)
+        setRecurringDeals(recurring)
+        setLimitedDeals(limited)
+        setCuisine(cuisine)
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  }
 
   // Ensure tel is entered in the right format
   const handleTelChange = (e) => {
@@ -86,6 +116,11 @@ const BusinessForm = (props) => {
     if (pattern.test(val)) {
       setState(val)
     }
+  }
+
+  const generatePreviewImage = (photo) => {
+    const url = photo instanceof File ? URL.createObjectURL(photo) : photo.path
+    return (<Img src={url} width={150} height={125} />)
   }
 
   const validateForm = () => {
@@ -133,7 +168,7 @@ const BusinessForm = (props) => {
     if (validateForm()) {
       // construct the FormData object to be sent to the backend
       const fd = new FormData();
-      const address = street + ', ' + city + ', ' + state + zip
+      const address = street + ', ' + city + ', ' + state + ' ' + zip
       const allDeals = [...limitedDeals, ...recurringDeals]
       fd.append('uid', props.uid)
       fd.append('business_id', props.bid || null)
@@ -212,7 +247,7 @@ const BusinessForm = (props) => {
         <FormLabel component='legend'>Images (5 max) </FormLabel>
         <FormHelperText error={true}>{error ? error.photos : ''}</FormHelperText>
         {
-          [...photos].map(photo => <Img src={URL.createObjectURL(photo)} width={150} height={125} />)
+          [...photos].map(photo => generatePreviewImage(photo))
         }
         <Input type="file" inputProps={{ multiple: true, accept: 'image/x-png,image/gif,image/jpeg,image/jpg' }} onChange={event => setPhotos(event.target.files)} />
         <Divider style={{ margin: '8px' }} />
@@ -230,7 +265,7 @@ const BusinessForm = (props) => {
         <DayEventList items={recurringDeals} dateTime="false" description="true" onAdd={data => setRecurringDeals(data)} onRemove={data => setRecurringDeals(data)} />
 
         <FormLabel component='legend'>Events</FormLabel>
-        <DayEventList dateTime="true" items={limitedDeals} description="true" onAdd={data => setLimitedDeals(data)} onRemove={data => setLimitedDeals(data)} />
+        <DayEventList dateTime="true" items={limitedDeals} description="true" onAdd={data => console.log(data)} onRemove={data => setLimitedDeals(data)} />
 
         <Button variant="contained" color='primary' type='submit'>Submit</Button>
       </form>
