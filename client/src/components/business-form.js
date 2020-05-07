@@ -78,10 +78,11 @@ const BusinessForm = (props) => {
     )
       .then(response => {
         // destructure the response to get all fields needed
-        const { name, address: { street, city, state, zip }, tel, menu, description } = response.data.info
+        const { name, address: { street, city, state, zip }, tel, menu, description, cuisine } = response.data.info
         const images = response.data.images
         const { limited, recurring } = response.data.deals
         const hours = response.data.hours
+        console.log(limited);
         // Set the form state using newly fetched data
         setName(name)
         setStreet(street)
@@ -95,7 +96,7 @@ const BusinessForm = (props) => {
         setHours(hours)
         setRecurringDeals(recurring)
         setLimitedDeals(limited)
-        setCuisine(cuisine)
+        setCuisine(TAGS.indexOf(cuisine))
       })
       .catch(error => {
         console.log(error);
@@ -140,8 +141,8 @@ const BusinessForm = (props) => {
     return (<Img key={photo.name} src={url} width={150} height={125} />)
   }
 
+  // if any of the required fields are empty display an error for each and return false
   const validateForm = () => {
-    // if any of the required fields are empty display an error for each
     let isValid = true;
     const errs = {
       name: !!name || "Name is required",
@@ -182,14 +183,29 @@ const BusinessForm = (props) => {
   // axios request goes in here
   const handleSubmit = e => {
     e.preventDefault()
+    console.log(JSON.stringify(limitedDeals));
     if (validateForm()) {
-      const httpMethod = props.bid ? 'put' : 'post'
+      let httpMethod = ''
+      let url = ''
+      let callback = undefined  // depends on if the form is for updating or creating a business
+      if (props.bid) {
+        httpMethod = 'put'
+        url = `http://localhost:3000/api/v1/accounts/businesses/${props.bid}`
+        callback = () => {
+          loadBusinessData()
+        }
+      } else {
+        httpMethod = 'post'
+        url = `http://localhost:3000/api/v1/accounts/businesses`
+        callback = (bid) => {
+          history.push(`/accounts/businesses/${bid}`)
+        }
+      }
       // construct the FormData object to be sent to the backend
       const fd = new FormData();
       const address = street + ', ' + city + ', ' + state + ' ' + zip
       const allDeals = [...limitedDeals, ...recurringDeals]
       fd.append('uid', props.uid)
-      fd.append('business_id', props.bid || null)
       fd.append('name', name)
       fd.append('address', address)
       fd.append('cuisine', TAGS[cuisine])
@@ -203,21 +219,24 @@ const BusinessForm = (props) => {
       }
       if (photos.length > 0 && photos[0] instanceof File) {
         for (let i = 0; i < photos.length; i++) {
-          fd.append('photo', photos[0])
+          fd.append('photo', photos[i])
         }
       }
-      // axios({
-      //   method: httpMethod,
-      //   url: 'http://localhost:3000/api/v1/accounts/businesses',
-      //   data: fd
-      // })
-      //   .then(res => {
-      //     if (res.status === 200) {
-      //       alert(res.message + ', Business ID: ' + res.bid)
-      //       // history.push(`/accounts/businesses/${res.data.bid}`)
-      //     }
-      //   })
-      //   .catch(err => console.log(err))
+      axios({
+        method: httpMethod,
+        url: url,
+        data: fd,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('eurekajwt')}`
+        }
+      })
+        .then(res => {
+          if (res.status === 200) {
+            alert(res.data.message + ', Business ID: ' + res.data.bid)
+            callback(res.data.bid)
+          }
+        })
+        .catch(err => console.log(err))
     }
   }
 
@@ -251,13 +270,12 @@ const BusinessForm = (props) => {
           <FormHelperText error={true}><label>{error ? error.cuisine : ''}</label></FormHelperText>
           <Select
             value={cuisine}
-            displayEmpty={true}
-            renderValue={() => "Choose One"}
+            native={true}
             inputProps={{ name: 'cuisine', id: 'cuisine-select' }}
             onChange={e => setCuisine(e.target.value)}
           >
             {
-              TAGS.map((val, index) => (<MenuItem key={index} value={index}>{val}</MenuItem>))
+              TAGS.map((val, index) => (<option key={index} value={index}>{val}</option>))
             }
           </Select>
         </FormControl>
@@ -290,7 +308,7 @@ const BusinessForm = (props) => {
         <DayEventList items={recurringDeals} dateTime="false" description="true" onAdd={data => setRecurringDeals(data)} onRemove={data => setRecurringDeals(data)} />
 
         <FormLabel component='legend'>Events</FormLabel>
-        <DayEventList dateTime="true" items={limitedDeals} description="true" onAdd={data => console.log(data)} onRemove={data => setLimitedDeals(data)} />
+        <DayEventList dateTime="true" items={limitedDeals} description="true" onAdd={data => setLimitedDeals(data)} onRemove={data => setLimitedDeals(data)} />
 
         <Button variant="contained" color='primary' type='submit'>Submit</Button>
       </form>
