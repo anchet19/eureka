@@ -12,7 +12,13 @@ exports.checkToken = (request, response, next) => {
     const token = bearer[1];
 
     jwt.verify(token, process.env.JWT_SECRET, (err, authorizedData) => {
-      if (err) { return response.sendStatus(403) }
+      let isValid = false
+      authorizedData.businesses.forEach(item => {
+        if (item.bid == request.params.business_id) {
+          isValid = true
+        }
+      })
+      if (err || !isValid) { return response.sendStatus(403) }
       request.authorizedData = authorizedData
       next()
     })
