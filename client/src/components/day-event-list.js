@@ -37,7 +37,7 @@ const DayEventList = ({ onAdd, onRemove, dateTime, ...props }) => {
   const isDateTime = dateTime === "true" ? true : false
   let STORAGE_FORMAT = ''
   if (isDateTime) {
-    STORAGE_FORMAT = 'YYYY-MM-DD HH:mm'
+    STORAGE_FORMAT = 'YYYY-MM-DD HH:mm Z'
   } else {
     STORAGE_FORMAT = 'HH:mm'
   }
