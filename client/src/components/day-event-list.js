@@ -125,7 +125,7 @@ const DayEventList = ({ onAdd, onRemove, dateTime, ...props }) => {
             </ListItemText>
             <ListItemText style={{ gridArea: 'desc' }} >{item.description}</ListItemText>
             <ListItemIcon style={{ gridArea: 'btn' }}>
-              <IconButton onClick={onRemoveItem(index)}><DeleteIcon /></IconButton>
+              <IconButton onClick={onRemoveItem(index)}><DeleteIcon color="secondary" /></IconButton>
             </ListItemIcon>
           </ListItem>
         ))
@@ -150,7 +150,7 @@ const DayEventList = ({ onAdd, onRemove, dateTime, ...props }) => {
             <TextareaAutosize rowsMin={3} rowsMax={3} label='Description' multiline="true" value={description} onChange={e => setDescription(e.target.value)} />
           </Fragment>
         }
-        <ListItemIcon style={{ justifySelf: 'end' }} children={<IconButton onClick={onAddItem}><AddIcon /></IconButton>} />
+        <ListItemIcon style={{ justifySelf: 'end' }} children={<IconButton onClick={onAddItem}><AddIcon color="primary" /></IconButton>} />
       </ListItem >
       <Divider style={{ marginTop: '8px' }} />
     </List >
