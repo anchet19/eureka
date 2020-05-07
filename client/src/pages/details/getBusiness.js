@@ -1,11 +1,5 @@
 /*
 *  @author Mateusz Koza
-
-  Needs to be done or fixed:
-  - Styling
-  - Displaying information more smoothly (Hours, Prmomos, Deals, Description mainly)
-  - Error if no complete data from business id
-
 */
 
 import React from 'react'
@@ -34,12 +28,6 @@ let counter = 0;
 
 var moment = require('moment');
 
-// Example mock data only for phone number and tags
-let business = {
-  phone: "(609) 456-7890",
-  tags: "American, Pub",
-}
-
 class GetBusiness extends React.Component {
 
       constructor(props) {
@@ -63,14 +51,7 @@ class GetBusiness extends React.Component {
               menu: '',
               opened: false
           };
-
-          this.toggleCard = this.toggleCard.bind(this);
     
-      }
-
-      toggleCard() {
-        const { opened } = this.state;
-        this.setState({ opened: !opened });
       }
 
       componentDidMount() {
@@ -98,10 +79,10 @@ class GetBusiness extends React.Component {
             this.setState({ address: this.state.business.info.address });
 
             // Business Phone Number so a user can call if they please
-            this.setState({ phone: this.state.business.info.phone });
+            this.setState({ phone: this.state.business.info.tel });
 
             // Business Tags so a user can determine if the style presented interests them
-            this.setState({ tags: this.state.business.info.tags });
+            this.setState({ tags: this.state.business.info.cuisine });
 
             // Business Images to show through Image Carousel
             this.setState({ images: this.state.business.images });
@@ -111,7 +92,6 @@ class GetBusiness extends React.Component {
 
             // Business Menu path to provide for the clickable pdf link
             this.setState({ menu: this.state.business.info.menu }); // Actual access to Business Menu
-            //this.setState({ menu: "https://senior-project-eureka.s3.amazonaws.com/94/menus/1587321188585.pdf" });
 
             // Business Hours to display in a list all available times
             this.setState({ hours: this.state.business.hours });
@@ -206,16 +186,6 @@ class GetBusiness extends React.Component {
             </div>
           );
         }
-
-        const { opened } = this.state;
-        let title;
-
-        if(opened) {
-          title = "Hide Card";
-        }
-        else {
-          title = "Show Card";
-        }
         
         // Handle whether a business only uploads 1 image, 2 images, or multiple images
         const imageCount = this.state.imgCount;
@@ -257,23 +227,24 @@ class GetBusiness extends React.Component {
 
       <div class="card-item">
 
-        <Card className="card-info">
+        <Card className="card-info" style={{overflowY: 'auto'}}>
             <CardContent>
-                  <Typography variant="h6" component="h2">
+                  <Typography variant="h6" component="h2" style={{fontFamily: 'Verdana'}}>
                     <AccessTimeIcon />
                     &nbsp;Business Hours
                   </Typography>
                   {this.state.hours ?
-                  <Typography variant="body1" component="p">
+                  <Typography variant="body1" component="p" style={{fontFamily: 'Verdana'}}>
                   
                     {this.state.hours.map(({weekday, open_time, closing_time}) => (
-                      <li>{weekday + " - Opens: " + moment(open_time, ["hh:mm:ss"]).format("hh:mm:ss A") + 
-                                     " | Closes:  " + moment(closing_time, ["hh:mm:ss"]).format("hh:mm:ss A")}</li>
+                      <li>{weekday + " - Opens: " + moment(open_time, ["hh:mm:ss"]).format("hh:mm:ss A") +
+                         " | Closes:  " + moment(closing_time, ["hh:mm:ss"]).format("hh:mm:ss A")} <br/><br/>
+                      </li>
                     ))}
                   
                   </Typography>
                   :
-                  <Typography variant="body1" component="p">
+                  <Typography variant="body1" component="p" style={{fontFamily: 'Verdana'}}>
                     No hours available.
                   </Typography>
                   }
@@ -286,11 +257,11 @@ class GetBusiness extends React.Component {
         <Card className="main-card">
             <CardContent>
               <br/>
-                <Typography gutterBottom variant="h3" component="h2"  >
+                <Typography gutterBottom variant="h3" component="h2" style={{fontFamily: 'Verdana'}}>
                   {this.state.name}
                 </Typography>
                 <br/>
-                <Typography variant="subtitle1" color="textPrimary" component="p">
+                <Typography variant="subtitle1" color="textPrimary" component="p" style={{fontFamily: 'Verdana'}}>
                   <div>
                     <Button
                       variant="outlined"
@@ -306,7 +277,7 @@ class GetBusiness extends React.Component {
                   {this.state.address}
                 </Typography>
                 <br/>
-                <Typography variant="subtitle1" color="textPrimary" component="p">
+                <Typography variant="subtitle1" color="textPrimary" component="p" style={{fontFamily: 'Verdana'}}>
                   <div>
                     <Button
                       variant="outlined"
@@ -324,7 +295,7 @@ class GetBusiness extends React.Component {
                   }
                 </Typography>
                 <br/>
-                <Typography variant="subtitle1" color="textPrimary" component="p">
+                <Typography variant="subtitle1" color="textPrimary" component="p" style={{fontFamily: 'Verdana'}}>
                   <div>
                   <Button
                       variant="outlined"
@@ -342,12 +313,11 @@ class GetBusiness extends React.Component {
                   }
                 </Typography>
                 <br/>
-                <div>
+                <div style={{fontFamily: 'Verdana'}}>
                   <Button
                       variant="outlined"
                       color="primary"
                       className="main-buttons"
-                      startIcon={<LocalDiningIcon />}
                       size="small"
                       disableElevation="true"
                     >
@@ -370,42 +340,24 @@ class GetBusiness extends React.Component {
       </div>
       <div class="card-item">
   
-        <Card className="card-info">
+        <Card className="card-info" style={{overflowY: 'auto'}}>
             <CardContent>
-                  <Typography variant="h6" component="h2">
-                    Description
-                  </Typography>
-                  {this.state.description ?
-                  <Typography variant="body1" component="p">
-                    {this.state.description}
-                  </Typography>
-                  :
-                  <Typography variant="body1" component="p">
-                    No description available.
-                  </Typography>
-                  }
-            </CardContent>
-        </Card>
-      </div>
-      <div class="card-item">
-  
-        <Card className="card-info">
-            <CardContent>
-                  <Typography variant="h6" component="h2">
+                  <Typography variant="h6" component="h2" style={{fontFamily: 'Verdana'}}>
                     <MonetizationOnIcon />
                     &nbsp;Deals
                   </Typography>
                   {this.state.recurring ?
-                  <Typography variant="body1" component="p">
+                  <Typography variant="body1" component="p" style={{fontFamily: 'Verdana'}}>
 
                     {this.state.recurring.map(({weekday, start_time, end_time, description}) => (
-                      <li>{weekday + " - Starts: " + moment(start_time, ["hh:mm:ss"]).format("hh:mm:ss A") + 
-                      " | Ends: " + moment(end_time, ["hh:mm:ss"]).format("hh:mm:ss A") + " * " + description}</li>
+                      <li>{weekday + " - " + moment(start_time, ["hh:mm:ss"]).format("hh:mm:ss A") + 
+                      " to " + moment(end_time, ["hh:mm:ss"]).format("hh:mm:ss A")} <br/> {"*" + description + "*"} <br/><br/>
+                      </li>
                     ))}
 
                   </Typography>
                   :
-                  <Typography variant="body1" component="p">
+                  <Typography variant="body1" component="p" style={{fontFamily: 'Verdana'}}> 
                     No deals available.
                   </Typography>
                   }
@@ -414,23 +366,44 @@ class GetBusiness extends React.Component {
       </div>  
       <div class="card-item">
   
-        <Card className="card-info">
+        <Card className="card-info" style={{overflowY: 'auto'}}>
             <CardContent>
-                  <Typography variant="h6" component="h2">
+                  <Typography variant="h6" component="h2" style={{fontFamily: 'Verdana'}}>
+                    Description
+                  </Typography>
+                  {this.state.description ?
+                  <Typography variant="body1" component="p" style={{fontFamily: 'Verdana'}}>
+                    {this.state.description}
+                  </Typography>
+                  :
+                  <Typography variant="body1" component="p" style={{fontFamily: 'Verdana'}}>
+                    No description available.
+                  </Typography>
+                  }
+            </CardContent>
+        </Card>
+      </div>
+      <div class="card-item">
+  
+        <Card className="card-info" style={{overflowY: 'auto'}}>
+            <CardContent>
+                  <Typography variant="h6" component="h2" style={{fontFamily: 'Verdana'}}> 
                     <StarsIcon />
                     &nbsp;Promos
                   </Typography>
                   {this.state.limited ?
-                  <Typography variant="body1" component="p">
+                  <Typography variant="body1" component="p" style={{fontFamily: 'Verdana'}}>
                   
                     {this.state.limited.map(({start_datetime, end_datetime, description}) => (
-                      <li>{"Starts: " + moment(start_datetime, "YYYY-MM-DDTHH:mm:ss.SSSZ").format("dd, MM-DD-YYYY hh:mm:ss A") + 
-                      " | Ends: " + moment(end_datetime, "YYYY-MM-DDTHH:mm:ss.SSSZ").format("dd, MM-DD-YYYY hh:mm:ss A")}</li>
+                      <li>{moment(start_datetime, "YYYY-MM-DDTHH:mm:ss.SSSZ").format("dd, MM-DD-YYYY hh:mm:ss A") + 
+                      " to " + moment(end_datetime, "YYYY-MM-DDTHH:mm:ss.SSSZ").format("dd, MM-DD-YYYY hh:mm:ss A")}
+                      <br/> {"*" + description + "*"} <br/><br/>
+                      </li>
                     ))}
 
                   </Typography>
                   :
-                  <Typography variant="body1" component="p">
+                  <Typography variant="body1" component="p" style={{fontFamily: 'Verdana'}}>
                     No promos available.
                   </Typography>
                   }
@@ -443,7 +416,7 @@ class GetBusiness extends React.Component {
             {this.state.images ? 
           
               <div>
-                <div className="border-carousel">
+                <div className="border-carousel" style={{fontFamily: 'Verdana'}}>
                 <span></span>
                 <Slider {...settings}>
 
@@ -459,7 +432,7 @@ class GetBusiness extends React.Component {
                 </div >
               </div> : 
 
-              <div className="no-images">
+              <div className="no-images" style={{fontFamily: 'Verdana'}}>
                 <h2>No images available.</h2>
               </div> }
         </Card>
@@ -478,7 +451,7 @@ class GetBusiness extends React.Component {
         {this.state.images ? 
       
           <div>
-            <div className="border-carousel">
+            <div className="border-carousel" style={{fontFamily: 'Verdana'}}>
             <span></span>
             <Slider {...settings}>
 
@@ -494,7 +467,7 @@ class GetBusiness extends React.Component {
             </div >
           </div> : 
 
-          <div className="no-images">
+          <div className="no-images" style={{fontFamily: 'Verdana'}}>
             <h2>No images available.</h2>
           </div> }
     </Card>
@@ -505,11 +478,11 @@ class GetBusiness extends React.Component {
     <Card className="main-card">
         <CardContent>
                 <br/>
-                <Typography gutterBottom variant="h3" component="h2"  >
+                <Typography gutterBottom variant="h2" component="h2" style={{fontFamily: 'Verdana'}}>
                   {this.state.name}
                 </Typography>
                 <br/>
-                <Typography variant="subtitle1" color="textPrimary" component="p">
+                <Typography variant="subtitle1" color="textPrimary" component="p" style={{fontFamily: 'Verdana'}}>
                   <div>
                     <Button
                       variant="outlined"
@@ -525,7 +498,7 @@ class GetBusiness extends React.Component {
                   {this.state.address}
                 </Typography>
                 <br/>
-                <Typography variant="subtitle1" color="textPrimary" component="p">
+                <Typography variant="subtitle1" color="textPrimary" component="p" style={{fontFamily: 'Verdana'}}>
                   <div>
                     <Button
                       variant="outlined"
@@ -538,10 +511,12 @@ class GetBusiness extends React.Component {
                       Phone Number
                     </Button>
                   </div>
-                  {business.phone}
+                  {this.state.phone ?
+                    this.state.phone : "No phone number available."
+                  }
                 </Typography>
                 <br/>
-                <Typography variant="subtitle1" color="textPrimary" component="p">
+                <Typography variant="subtitle1" color="textPrimary" component="p" style={{fontFamily: 'Verdana'}}>
                   <div>
                   <Button
                       variant="outlined"
@@ -554,10 +529,12 @@ class GetBusiness extends React.Component {
                       Tags
                     </Button>
                   </div>
-                  {business.tags}
+                  {this.state.tags ?
+                    this.state.tags : "No tags available."
+                  }
                 </Typography>
                 <br/>
-                <div>
+                <div style={{fontFamily: 'Verdana'}}>
                   <Button
                       variant="outlined"
                       color="primary"
@@ -583,25 +560,25 @@ class GetBusiness extends React.Component {
               <br />
             </Card>
     </div>
-    <div class="card-item">
+    <div class="card-item" >
 
-      <Card className="card-info">
+      <Card className="card-info" style={{overflowY: 'auto'}}>
           <CardContent>
-                  <Typography variant="h6" component="h2">
+                  <Typography variant="h6" component="h2" style={{fontFamily: 'Verdana'}}>
                     <AccessTimeIcon />
                     &nbsp;Business Hours
                   </Typography>
                   {this.state.hours ?
-                  <Typography variant="body1" component="p">
+                  <Typography variant="body1" component="p" style={{fontFamily: 'Verdana'}}>
                   
                   {this.state.hours.map(({weekday, open_time, closing_time}) => (
-                      <li>{weekday + " - Opens: " + moment(open_time, ["hh:mm:ss"]).format("hh:mm:ss A") + 
-                                     " | Closes:  " + moment(closing_time, ["hh:mm:ss"]).format("hh:mm:ss A")}</li>
+                      <li>{weekday} <br/> {"Opens: " + moment(open_time, ["hh:mm:ss"]).format("hh:mm:ss A") + 
+                      " | Closes:  " + moment(closing_time, ["hh:mm:ss"]).format("hh:mm:ss A")}</li>
                     ))}
                   
                   </Typography>
                   :
-                  <Typography variant="body1" component="p">
+                  <Typography variant="body1" component="p" style={{fontFamily: 'Verdana'}}>
                     No hours available.
                   </Typography>
                   }
@@ -610,17 +587,17 @@ class GetBusiness extends React.Component {
     </div>
     <div class="card-item">
 
-        <Card className="card-info">
+        <Card className="card-info" style={{overflowY: 'auto'}}>
             <CardContent>
-                  <Typography variant="h6" component="h2">
+                  <Typography variant="h6" component="h2" style={{fontFamily: 'Verdana'}}>
                     Description
                   </Typography>
                   {this.state.description ?
-                  <Typography variant="body1" component="p">
+                  <Typography variant="body1" component="p" style={{fontFamily: 'Verdana'}}>
                     {this.state.description}
                   </Typography>
                   :
-                  <Typography variant="body1" component="p">
+                  <Typography variant="body1" component="p" style={{fontFamily: 'Verdana'}}>
                     No description available.
                   </Typography>
                   }
@@ -629,23 +606,23 @@ class GetBusiness extends React.Component {
     </div>
     <div class="card-item">
   
-        <Card className="card-info">
+        <Card className="card-info" style={{overflowY: 'auto'}}>
             <CardContent>
-                  <Typography variant="h6" component="h2">
+                  <Typography variant="h6" component="h2" style={{fontFamily: 'Verdana'}}>
                     <MonetizationOnIcon />
                     &nbsp;Deals
                   </Typography>
                   {this.state.recurring ?
-                  <Typography variant="body1" component="p">
+                  <Typography variant="body1" component="p" style={{fontFamily: 'Verdana'}}>
 
                     {this.state.recurring.map(({weekday, start_time, end_time, description}) => (
-                      <li>{weekday + " - Starts: " + moment(start_time, ["hh:mm:ss"]).format("hh:mm:ss A") + 
-                      " | Ends: " + moment(end_time, ["hh:mm:ss"]).format("hh:mm:ss A") + " * " + description}</li>
+                      <li>{weekday + " - " + moment(start_time, ["hh:mm:ss"]).format("hh:mm:ss A") + 
+                      " to " + moment(end_time, ["hh:mm:ss"]).format("hh:mm:ss A")} <br/> {"*" + description + "*"}</li>
                     ))}
 
                   </Typography>
                   :
-                  <Typography variant="body1" component="p">
+                  <Typography variant="body1" component="p" style={{fontFamily: 'Verdana'}}>
                     No deals available.
                   </Typography>
                   }
@@ -654,23 +631,25 @@ class GetBusiness extends React.Component {
       </div>  
       <div class="card-item">
   
-        <Card className="card-info">
+        <Card className="card-info" style={{overflowY: 'auto'}}>
             <CardContent>
-                  <Typography variant="h6" component="h2">
+                  <Typography variant="h6" component="h2" style={{fontFamily: 'Verdana'}}>
                     <StarsIcon />
                     &nbsp;Promos
                   </Typography>
                   {this.state.limited ?
-                  <Typography variant="body1" component="p">
+                  <Typography variant="body1" component="p" style={{fontFamily: 'Verdana'}}>
                   
                     {this.state.limited.map(({start_datetime, end_datetime, description}) => (
-                      <li>{"Starts: " + moment(start_datetime, "YYYY-MM-DDTHH:mm:ss.SSSZ").format("dd, MM-DD-YYYY hh:mm:ss A") + 
-                      " | Ends: " + moment(end_datetime, "YYYY-MM-DDTHH:mm:ss.SSSZ").format("dd, MM-DD-YYYY hh:mm:ss A")}</li>
+                      <li>{"Starts: " + moment(start_datetime, "YYYY-MM-DDTHH:mm:ss.SSSZ").format("dd, MM-DD-YYYY hh:mm:ss A")}<br/>
+                      &nbsp;&nbsp;{"Ends: " + moment(end_datetime, "YYYY-MM-DDTHH:mm:ss.SSSZ").format("dd, MM-DD-YYYY hh:mm:ss A")}<br/>
+                      {"*" + description + "*"}
+                      </li>
                     ))}
 
                   </Typography>
                   :
-                  <Typography variant="body1" component="p">
+                  <Typography variant="body1" component="p" style={{fontFamily: 'Verdana'}}>
                     No promos available.
                   </Typography>
                   }
