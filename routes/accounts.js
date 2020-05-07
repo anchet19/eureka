@@ -9,6 +9,7 @@
 const express = require('express')
 const router = express.Router()
 const path = require('path')
+const moment = require('moment')
 // for validating and sanitizing request data
 const { body, validationResult } = require('express-validator')
 
@@ -46,7 +47,7 @@ router.post('/users', [
 
 ], async (request, response) => {
   console.log(request.body);
-
+  // Check for any express-validator errors
   const errors = validationResult(request);
   if (!errors.isEmpty()) {
     console.log(errors);
@@ -112,9 +113,9 @@ router.post(
   ],
   async (request, response) => {
     const errors = validationResult(request);
-    // if (!errors.isEmpty()) {
-    //   return response.status(422).json({ errors: errors.array() })
-    // }
+    if (!errors.isEmpty()) {
+      return response.status(422).json({ errors: errors.array() })
+    }
     try {
       const { uid, name, address, cuisine, description, isAdult, owner_id, tel } = request.body
       const { lat, lng } = await getGeocode(address)
@@ -325,40 +326,47 @@ router.put(
         const stmt = 'CALL clearImages(?)'
         db.query(stmt, [business_id], (err, results) => {
           if (err) return response.json({ error: err.sqlMessage })
-        })
-        const sql3 = 'CALL insertImage(?,?,?)'
-        photos.forEach((photo) => {
-          db.query(sql3, [business_id, photo.originalname, photo.location], (err, results, fields) => {
-            if (err) return response.json({ error: err.sqlMessage })
+          const sql3 = 'CALL insertImage(?,?,?)'
+          photos.forEach((photo) => {
+            db.query(sql3, [business_id, photo.originalname, photo.location], (err, results, fields) => {
+              if (err) return response.json({ error: err.sqlMessage })
 
+            })
           })
         })
+
       }
       // If the user provided any deals clear old deals and insert new deals into the database
       if (request.body.deals) {
         const deals = await JSON.parse(request.body.deals)
+        console.log(deals);
         const stmt2 = 'CALL clearDeals(?)'
         db.query(stmt2, [business_id], (err, results, fields) => {
           if (err) return response.json({ error: err.sqlMessage })
-        })
-        // Each deal type requires certain fields to be null so generate the procedure call dynamically
-        let sql4 = ''
-        deals.forEach(({ description, day, starts, ends, }) => {
-          if (day) {
-            sql4 = 'CALL insertDeal(?,?,"Recurring",?,?,?,null,null)'
-          } else {
-            sql4 = 'CALL insertDeal(?,?,"Limited",?,null,null,?,?)'
-          }
-          db.query(sql4, [
-            business_id,
-            description,
-            day ? day : null, // null here instead of in statement to make each call have 5 wildcards 
-            starts,
-            ends,
-          ],
-            (err, results, fields) => {
-              if (err) { console.error(err.stack) }
-            })
+          // Each deal type requires certain fields to be null so generate the procedure call dynamically
+          let sql4 = ''
+          deals.forEach(({ description, day, starts, ends, }) => {
+            console.log(starts, ends);
+            if (day) {
+              sql4 = 'CALL insertDeal(?,?,"Recurring",?,?,?,null,null)'
+            } else {
+              sql4 = 'CALL insertDeal(?,?,"Limited",?,null,null,?,?)'
+              starts = moment(starts, "YYYY-MM-DD HH-mm Z").format("YYYY-MM-DD HH-mm").toString()
+              ends = moment(ends, "YYYY-MM-DD HH-mm Z").format("YYYY-MM-DD HH-mm").toString()
+              console.log(starts)
+              console.log(ends)
+            }
+            db.query(sql4, [
+              business_id,
+              description,
+              day ? day : null, // null here instead of in statement to make each call have 5 wildcards 
+              starts,
+              ends,
+            ],
+              (err, results, fields) => {
+                if (err) { console.error(err.stack) }
+              })
+          })
         })
       }
 
@@ -376,9 +384,8 @@ router.put(
         })
       }
       setTimeout(() => {
-        response.status(200).json('Business Updated')
-
-      }, 3000);
+        response.status(200).json({ bid: business_id, message: 'Business Updated' })
+      }, 1000);
     } catch (err) {
       console.error(err.stack)
       response.status(422).json({ error: err.stack })
