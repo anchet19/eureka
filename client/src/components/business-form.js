@@ -31,7 +31,6 @@ const OutlinedTextField = (props) => (
     style={{ paddingRight: '8px' }}
     margin='dense'
     variant='outlined'
-  // InputLabelProps={{ shrink: true }}
   // required={props.notRequired ? false : true}
   />
 )
@@ -53,23 +52,28 @@ const BusinessForm = (props) => {
   // combine these into a "deals" array when submitting
   const [recurringDeals, setRecurringDeals] = useState([])
   const [limitedDeals, setLimitedDeals] = useState([])
-
   const [menu, setMenu] = useState()
   const [photos, setPhotos] = useState([])
 
+  // if probs.bid changes, refetch the data
   useEffect(() => {
     loadBusinessData()
   }, [props.bid])
 
+  // fetch the data for the given business id from the server
   const loadBusinessData = () => {
     axios.get(`http://localhost:3000/api/v1/accounts/businesses/${props.bid}`,
-      { headers: { Authorization: `Bearer ${localStorage.getItem('eurekajwt')}` } })
+      { headers: { Authorization: `Bearer ${localStorage.getItem('eurekajwt')}` } } // provide token from local storage for auth
+    )
       .then(response => {
         console.log(response.data.info);
+        // destructure the response to get all fields needed
         const { name, address: { street, city, state, zip }, tel, menu, description } = response.data.info
         const images = response.data.images
         const { limited, recurring } = response.data.deals
         const hours = response.data.hours
+
+        // Set the form state using newly fetched data
         setName(name)
         setStreet(street)
         setCity(city)
@@ -118,6 +122,10 @@ const BusinessForm = (props) => {
     }
   }
 
+  /**
+   * Generate an Img component to render as a preview
+   * @param {File | Object} photo Either a File or an Object with a name and a path
+   */
   const generatePreviewImage = (photo) => {
     const url = photo instanceof File ? URL.createObjectURL(photo) : photo.path
     return (<Img src={url} width={150} height={125} />)
