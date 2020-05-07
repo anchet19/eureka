@@ -291,17 +291,16 @@ router.put(
     body('description'),
   ],
   async (request, response) => {
-    console.log(request.body);
     const errors = validationResult(request);
     if (!errors.isEmpty()) {
       return response.status(422).json({ errors: errors.array() })
     }
     try {
-      const { uid, name, address, lat, lng, cuisine, description, isAdult, tel } = request.body
+      const { uid, name, address, cuisine, description, isAdult, tel } = request.body
       const { business_id } = request.params
       const menu = request.files.menu ? request.files.menu[0].location : null
       const photos = request.files.photo;
-
+      const { lat, lng } = await getGeocode(address)
       // update info for a particular business based on their unique business id
       const sql2 = 'CALL updateBusiness(?,?,?,?,?,?,?,?,?,?)';
       db.query(
