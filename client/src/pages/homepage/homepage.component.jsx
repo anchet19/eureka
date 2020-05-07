@@ -1,3 +1,6 @@
+/*  homepage.component.jsx
+    Author: Matthew Tam
+*/
 import React, { useState, useEffect } from 'react';
 import { Slider, Typography, SvgIcon } from '@material-ui/core';
 import TuneIcon from '@material-ui/icons/Tune';
@@ -130,7 +133,7 @@ const HomePage = () => {
             >
               <div style={{paddingLeft: "20px", paddingRight: "20px", paddingTop: "25px", overflow: "hidden"}}>
                 <Typography id="discrete-slider-restrict" gutterBottom>
-                  Radius {radius}
+                  Radius
                 </Typography>
                 <Slider
                   defaultValue={radius}

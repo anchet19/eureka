@@ -1,4 +1,6 @@
-// src/DisplayMapFC.js
+/*  src/DisplayMapFC.js
+    Author: Matthew Tam
+*/
 import BusinessCard from '../businessCard.component';
 import * as React from 'react';
 

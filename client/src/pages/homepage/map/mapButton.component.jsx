@@ -1,8 +1,11 @@
+/*  mapButton.component.jsx
+    Author: Matthew Tam
+*/
 import React, { useState } from 'react'
 import { Button, Popover, } from '@material-ui/core';
 
 function MapButton( props ) {
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [anchorEl, setAnchorEl] = useState(null);
 
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
