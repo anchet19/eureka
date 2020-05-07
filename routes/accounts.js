@@ -363,11 +363,11 @@ router.put(
       }
 
       // Update business hours of operation
-      if (request.body.hours.length > 0) {
+      if (request.body.hours) {
         const hours = await JSON.parse(request.body.hours)
         const stmt3 = 'CALL clearBusinessHours(?)'
         db.query(stmt3, [business_id], (err, results) => {
-          const sql5 = 'CALL updateBusinessHours(?,?,?,?)'
+          const sql5 = 'CALL insertBusinessHours(?,?,?,?)'
           hours.forEach(({ day, starts, ends }) => {
             db.query(sql5, [business_id, day, starts, ends], (err, results) => {
               if (err) return response.json({ error: err.sqlMessage })
