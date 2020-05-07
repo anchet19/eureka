@@ -15,7 +15,9 @@ import {
   option,
   Select,
   FormControl,
-  InputLabel
+  InputLabel,
+  Link,
+  MenuItem
 } from '@material-ui/core';
 
 import DayEventList from './day-event-list'
@@ -35,6 +37,15 @@ const OutlinedTextField = (props) => (
   />
 )
 
+const TAGS = [
+  'American',
+  'Thai',
+  'Japanese',
+  'Mexican',
+  'Jamaican',
+  'German'
+]
+
 
 const BusinessForm = (props) => {
   const history = useHistory()
@@ -48,7 +59,7 @@ const BusinessForm = (props) => {
   const [tel, setTel] = useState('')
   const [hours, setHours] = useState([])
   const [description, setDescription] = useState('')
-  const [cuisine, setCuisine] = useState()
+  const [cuisine, setCuisine] = useState('')
   // combine these into a "deals" array when submitting
   const [recurringDeals, setRecurringDeals] = useState([])
   const [limitedDeals, setLimitedDeals] = useState([])
@@ -66,13 +77,11 @@ const BusinessForm = (props) => {
       { headers: { Authorization: `Bearer ${localStorage.getItem('eurekajwt')}` } } // provide token from local storage for auth
     )
       .then(response => {
-        console.log(response.data.info);
         // destructure the response to get all fields needed
         const { name, address: { street, city, state, zip }, tel, menu, description } = response.data.info
         const images = response.data.images
         const { limited, recurring } = response.data.deals
         const hours = response.data.hours
-
         // Set the form state using newly fetched data
         setName(name)
         setStreet(street)
@@ -128,7 +137,7 @@ const BusinessForm = (props) => {
    */
   const generatePreviewImage = (photo) => {
     const url = photo instanceof File ? URL.createObjectURL(photo) : photo.path
-    return (<Img src={url} width={150} height={125} />)
+    return (<Img key={photo.name} src={url} width={150} height={125} />)
   }
 
   const validateForm = () => {
@@ -174,6 +183,7 @@ const BusinessForm = (props) => {
   const handleSubmit = e => {
     e.preventDefault()
     if (validateForm()) {
+      const httpMethod = props.bid ? 'put' : 'post'
       // construct the FormData object to be sent to the backend
       const fd = new FormData();
       const address = street + ', ' + city + ', ' + state + ' ' + zip
@@ -182,30 +192,32 @@ const BusinessForm = (props) => {
       fd.append('business_id', props.bid || null)
       fd.append('name', name)
       fd.append('address', address)
-      fd.append('cuisine', cuisine)
+      fd.append('cuisine', TAGS[cuisine])
       fd.append('tel', tel)
       fd.append('description', description)
       fd.append('isAdult', 0)
       fd.append('deals', JSON.stringify(allDeals))
       fd.append('hours', JSON.stringify(hours))
-      fd.append('menu', menu)
-      if (photos.length > 0) {
+      if (menu instanceof File) {
+        fd.append('menu', menu)
+      }
+      if (photos.length > 0 && photos[0] instanceof File) {
         for (let i = 0; i < photos.length; i++) {
           fd.append('photo', photos[0])
         }
       }
-      axios({
-        method: 'post',
-        url: 'http://localhost:3000/api/v1/accounts/businesses',
-        data: fd
-      })
-        .then(res => {
-          if (res.status === 200) {
-            alert(res.message + ', Business ID: ' + res.bid)
-            // history.push(`/accounts/businesses/${res.data.bid}`)
-          }
-        })
-        .catch(err => console.log(err))
+      // axios({
+      //   method: httpMethod,
+      //   url: 'http://localhost:3000/api/v1/accounts/businesses',
+      //   data: fd
+      // })
+      //   .then(res => {
+      //     if (res.status === 200) {
+      //       alert(res.message + ', Business ID: ' + res.bid)
+      //       // history.push(`/accounts/businesses/${res.data.bid}`)
+      //     }
+      //   })
+      //   .catch(err => console.log(err))
     }
   }
 
@@ -214,59 +226,64 @@ const BusinessForm = (props) => {
       <form onSubmit={handleSubmit}>
         <FormLabel component='legend'>Business Info</FormLabel>
         <FormGroup >
-          <FormHelperText error={true}>{error ? error.name : ''}</FormHelperText>
+          <FormHelperText error={true}><label>{error ? error.name : ''}</label></FormHelperText>
           <OutlinedTextField value={name} onChange={event => setName(event.target.value)} id='name' label='Business name' type='text' />
 
-          <FormHelperText error={true}>{error && error.street}</FormHelperText>
+          <FormHelperText error={true}><label>{error && error.street}</label></FormHelperText>
           <OutlinedTextField value={street} onChange={event => setStreet(event.target.value)} id='street' label='Street' type='text' />
 
-          <FormHelperText error={true}>{error ? error.city : ''}</FormHelperText>
+          <FormHelperText error={true}><label>{error ? error.city : ''}</label></FormHelperText>
           <OutlinedTextField value={city} onChange={event => setCity(event.target.value)} id='city' label='City' type='text' />
 
-          <FormHelperText error={true}>{error ? error.state : ''}</FormHelperText>
+          <FormHelperText error={true}><label>{error ? error.state : ''}</label></FormHelperText>
           <OutlinedTextField value={state} onChange={handleStateChange} id='state' label='State' type='text' />
 
-          <FormHelperText error={true}>{error ? error.zip : ''}</FormHelperText>
+          <FormHelperText error={true}><label>{error ? error.zip : ''}</label></FormHelperText>
           <OutlinedTextField value={zip} onChange={handleZipChange} id='zip' label='Zip' type='text' />
 
-          <FormHelperText error={true}>{error ? error.tel : ''}</FormHelperText>
+          <FormHelperText error={true}><label>{error ? error.tel : ''}</label></FormHelperText>
           <OutlinedTextField value={tel} onChange={handleTelChange} id='tel' label='Telephone' type='tel' />
         </FormGroup>
         <Divider style={{ margin: '8px' }} />
+
         <FormLabel component='legend'>Cuisine</FormLabel>
         <FormControl>
-
-          <FormHelperText error={true}>{error ? error.cuisine : ''}</FormHelperText>
-          <Select value={cuisine} inputProps={{ name: 'cuisine', id: 'cuisine-select', defaultValue: 0 }} onChange={e => setCuisine(e.target.value)}>
-            <option value={0} disabled>Choose One</option>
-            <option value='American'>American</option>
-            <option value='Thai'>Thai</option>
-            <option value='Japanese'>Japanese</option>
-            <option value='Mexican'>Mexican</option>
-            <option value='Jamaican'>Jamaican</option>
-            <option value='German'>German</option>
+          <FormHelperText error={true}><label>{error ? error.cuisine : ''}</label></FormHelperText>
+          <Select
+            value={cuisine}
+            displayEmpty={true}
+            renderValue={() => "Choose One"}
+            inputProps={{ name: 'cuisine', id: 'cuisine-select' }}
+            onChange={e => setCuisine(e.target.value)}
+          >
+            {
+              TAGS.map((val, index) => (<MenuItem key={index} value={index}>{val}</MenuItem>))
+            }
           </Select>
         </FormControl>
         <Divider style={{ margin: '8px' }} />
+
         <FormLabel component='legend'>Description</FormLabel>
-        <TextareaAutosize id='description' style={{ width: '100%' }} rowsMax={5} rowsMin={5} onChange={e => setDescription(e.target.value)} />
+        <TextareaAutosize id='description' value={description} style={{ width: '100%' }} rowsMax={5} rowsMin={5} onChange={e => setDescription(e.target.value)} />
         <Divider style={{ margin: '8px' }} />
 
         <FormLabel component='legend'>Images (5 max) </FormLabel>
-        <FormHelperText error={true}>{error ? error.photos : ''}</FormHelperText>
-        {
-          [...photos].map(photo => generatePreviewImage(photo))
-        }
+        <FormHelperText error={true}><label>{error ? error.photos : ''}</label></FormHelperText>
+        <div>
+          {
+            [...photos].map(photo => generatePreviewImage(photo))
+          }
+        </div>
         <Input type="file" inputProps={{ multiple: true, accept: 'image/x-png,image/gif,image/jpeg,image/jpg' }} onChange={event => setPhotos(event.target.files)} />
         <Divider style={{ margin: '8px' }} />
 
-        <FormLabel component='legend'>Menu</FormLabel>
-        <FormHelperText error={true}>{error ? error.menu : ''}</FormHelperText>
+        <FormLabel component='legend'>Menu {menu && <Link href={menu instanceof File ? URL.createObjectURL(menu) : menu}>Preview</Link>}</FormLabel>
+        <FormHelperText error={true}><label>{error ? error.menu : ''}</label></FormHelperText>
         <Input type="file" inputProps={{ multiple: true, accept: 'application/pdf' }} onChange={event => setMenu(event.target.files[0])} />
         <Divider style={{ margin: '8px' }} />
 
         <FormLabel component='legend'>Hours</FormLabel>
-        <FormHelperText error={true}>{error ? error.hours : ''}</FormHelperText>
+        <FormHelperText error={true}><label>{error ? error.hours : ''}</label></FormHelperText>
         <DayEventList items={hours} dateTime="false" description="false" onAdd={data => setHours(data)} onRemove={data => setHours(data)} />
 
         <FormLabel component='legend'>Specials</FormLabel>
