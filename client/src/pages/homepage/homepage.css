@@ -17,11 +17,30 @@
     overflow-y: hidden;
 } */
 
+.MapContainer {
+    display:    inline-block;
+    position:   absolute;
+    width:      calc(100vw - 300px);
+    height:     calc(100vh - 64px);
+}
+
 .map {
     display:    inline-block;
     position:   absolute;
     width:      calc(100vw - 300px);
     height:     calc(100vh - 64px);
+}
+
+.MapControls {
+    position:   absolute;
+    z-index:    1;
+}
+
+.MapButton {
+    display:    inline-block;
+    padding:    5px;
+    height:     50px;
+    width:      50px;
 }
 
 .MobileBusinessList {
@@ -55,6 +74,13 @@
 @media only screen and (max-width: 600px) {
     html {
         font-size: 75%;
+    }
+
+    .MapContainer {
+        display:    block;
+        position:   static;
+        width:      100vw;
+        height:     calc(100vh - (30vh + 56px));
     }
 
     .map {
