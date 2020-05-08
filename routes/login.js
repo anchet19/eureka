@@ -28,7 +28,6 @@ router.post('/', [
       // Validate the given password agains the hash from the DB
       const isValid = await validate(password, results.hash)
       if (isValid) {
-        const user = {}
         // retrieve the user_id
         const sql2 = 'SELECT user_id from users where email = ?'
         db.query(sql2, [results.email], async (err, [{ user_id }]) => {

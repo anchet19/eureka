@@ -6,19 +6,12 @@ const jwt = require('jsonwebtoken')
  */
 exports.checkToken = (request, response, next) => {
   const header = request.headers['authorization'];
-
   if (typeof header !== 'undefined') {
     const bearer = header.split(' ');
     const token = bearer[1];
 
     jwt.verify(token, process.env.JWT_SECRET, (err, authorizedData) => {
-      let isValid = false
-      authorizedData.businesses.forEach(item => {
-        if (item.bid == request.params.business_id) {
-          isValid = true
-        }
-      })
-      if (err || !isValid) { return response.sendStatus(403) }
+      if (err) { return response.sendStatus(403) }
       request.authorizedData = authorizedData
       next()
     })

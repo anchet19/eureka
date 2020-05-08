@@ -8,8 +8,6 @@ import { Container } from '@material-ui/core';
 const AccountPage = () => {
   const { user } = useAuth()
   const { bid } = useParams();
-  console.log(user.businesses)
-  console.log(bid)
   const ownsBusiness = () => {
     let owns = false
     user.businesses.forEach(entry => {

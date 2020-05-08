@@ -22,6 +22,8 @@ import {
 
 import DayEventList from './day-event-list'
 
+import { useAuth } from '../hooks/useAuth'
+
 
 /**
  * TextField wrapper that applies some default styles
@@ -48,6 +50,7 @@ const TAGS = [
 
 
 const BusinessForm = (props) => {
+  const { addBusiness, updateBusiness } = useAuth()
   const history = useHistory()
   const [error, setError] = useState()
   // Values for form data and form default state
@@ -82,7 +85,7 @@ const BusinessForm = (props) => {
         const images = response.data.images
         const { limited, recurring } = response.data.deals
         const hours = response.data.hours
-        console.log(limited);
+
         // Set the form state using newly fetched data
         setName(name)
         setStreet(street)
@@ -165,25 +168,9 @@ const BusinessForm = (props) => {
     return isValid
   }
 
-  // const test = () => {
-  //   console.log(name);
-  //   console.log(street);
-  //   console.log(city);
-  //   console.log(state);
-  //   console.log(zip);
-  //   console.log(tel);
-  //   console.log(hours);
-  //   console.log(description);
-  //   console.log(cuisine);
-  //   console.log(recurringDeals);
-  //   console.log(limitedDeals);
-  //   console.log(menu);
-  //   console.log(photos);
-  // }
   // axios request goes in here
   const handleSubmit = e => {
     e.preventDefault()
-    console.log(JSON.stringify(limitedDeals));
     if (validateForm()) {
       let httpMethod = ''
       let url = ''
@@ -191,14 +178,16 @@ const BusinessForm = (props) => {
       if (props.bid) {
         httpMethod = 'put'
         url = `http://localhost:3000/api/v1/accounts/businesses/${props.bid}`
-        callback = () => {
+        callback = (bid, token) => {
+          updateBusiness(bid, name, token)
           loadBusinessData()
         }
       } else {
         httpMethod = 'post'
         url = `http://localhost:3000/api/v1/accounts/businesses`
-        callback = (bid) => {
-          history.push(`/accounts/businesses/${bid}`)
+        callback = (bid, token) => {
+          addBusiness(bid, name, token)
+          window.location.reload(false)
         }
       }
       // construct the FormData object to be sent to the backend
@@ -232,8 +221,9 @@ const BusinessForm = (props) => {
       })
         .then(res => {
           if (res.status === 200) {
-            alert(res.data.message + ', Business ID: ' + res.data.bid)
-            callback(res.data.bid)
+            alert(res.data.message)
+            console.log(res.data.token);
+            callback(res.data.bid, res.data.token)
           }
         })
         .catch(err => console.log(err))

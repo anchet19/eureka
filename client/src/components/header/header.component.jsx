@@ -97,7 +97,7 @@ const Header = () => {
               {isAuthenticated() ?
                 // User is currently logged in
                 <div>
-                  {user.businesses.length > 0 ?
+                  {user.businesses && user.businesses.length > 0 ?
                     <Fragment>
                       <ListSubheader>My Businesses</ListSubheader>
                       <Divider />

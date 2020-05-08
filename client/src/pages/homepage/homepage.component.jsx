@@ -70,7 +70,6 @@ const HomePage = () => {
       })
         .then(res => {
           setBusinesses(res.data);
-          //console.log(res.data);
         })
     })
   }, [radius]);
@@ -78,26 +77,26 @@ const HomePage = () => {
   // Example mock data for proper formatting
   let demoBusinesses = [
     {
-        business_id: 1,
-        name: "McDonalds",
-        address: "656 Delsea Dr, Glassboro, NJ 08028",
-        cuisine: "fast food",
-        open: "false",
-        lat: 39.7059,
-        long: -75.1808,
-        image: "/images/image.png",
-        distance: 0
+      business_id: 1,
+      name: "McDonalds",
+      address: "656 Delsea Dr, Glassboro, NJ 08028",
+      cuisine: "fast food",
+      open: "false",
+      lat: 39.7059,
+      long: -75.1808,
+      image: "/images/image.png",
+      distance: 0
     },
     {
-        business_id: 7,
-        name: "Wendys",
-        address: "620 Woodbury Glassboro Rd, Sewell, NJ 08080",
-        cuisine: "fast food",
-        open: "false",
-        lat: 39.7307,
-        long: -75.1314,
-        image: "images/testing/test.jpg",
-        distance: 3.135449827421824
+      business_id: 7,
+      name: "Wendys",
+      address: "620 Woodbury Glassboro Rd, Sewell, NJ 08080",
+      cuisine: "fast food",
+      open: "false",
+      lat: 39.7307,
+      long: -75.1314,
+      image: "images/testing/test.jpg",
+      distance: 3.135449827421824
     }
 ];
 
