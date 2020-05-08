@@ -49,7 +49,14 @@ exports.upload = multer({
     },
     key: (request, file, cb) => {
       const ext = path.extname(file.originalname)
-      cb(null, request.body.uid + `/${file.fieldname}s/` + path.basename(file.originalname, ext).toLowerCase() + Date.now().toString() + ext.toLowerCase())
+      cb(
+        null,
+        request.body.uid
+        + `/${file.fieldname}s/`
+        + path.basename(file.originalname, ext).toLowerCase()
+        + Date.now().toString()
+        + ext.toLowerCase()
+      )
     }
   })
 }).fields([{ name: 'menu', maxCount: 1 }, { name: 'photo', maxCount: 5 }])

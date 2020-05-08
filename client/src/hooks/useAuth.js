@@ -60,10 +60,15 @@ export const useAuth = () => {
     return state.isAuthenticated
   }
 
+  const getErrors = () => {
+    return state.error
+  }
+
   return {
     user: state.user,
     login,
     logout,
-    isAuthenticated
+    isAuthenticated,
+    getErrors
   }
 }

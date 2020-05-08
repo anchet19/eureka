@@ -9,6 +9,7 @@
 const express = require('express')
 const router = express.Router()
 const path = require('path')
+const moment = require('moment')
 // for validating and sanitizing request data
 const { body, validationResult } = require('express-validator')
 
@@ -17,6 +18,7 @@ const multer = require('multer')
 const { upload } = require('../middlewares/multer')
 
 const db = require('../db');
+
 const { createHash } = require('../utils/auth')
 const { checkToken } = require('../middlewares/auth')
 
@@ -45,7 +47,7 @@ router.post('/users', [
 
 ], async (request, response) => {
   console.log(request.body);
-
+  // Check for any express-validator errors
   const errors = validationResult(request);
   if (!errors.isEmpty()) {
     console.log(errors);
@@ -63,14 +65,14 @@ router.post('/users', [
       request.body.last_name,
     ],
     (err, results) => {
-      if (err) response.status(422).json({ error: err.message })
+      if (err) response.status(422).json({ error: err.sqlMessage })
       return response.status(200).json(results)
     })
 })
 
 // Create a new business
 router.post(
-  '/businesses', checkToken,
+  '/businesses',
   (request, response, next) => {
     /**
      * middleware to handle multipart-form and file uploads
@@ -111,27 +113,21 @@ router.post(
   ],
   async (request, response) => {
     const errors = validationResult(request);
-    // if (!errors.isEmpty()) {
-    //   return response.status(422).json({ errors: errors.array() })
-    // }
+    if (!errors.isEmpty()) {
+      return response.status(422).json({ errors: errors.array() })
+    }
     try {
-      console.log(request.body);
-      console.log(request.files);
-      console.log('==========================================================');
       const { uid, name, address, cuisine, description, isAdult, owner_id, tel } = request.body
       const { lat, lng } = await getGeocode(address)
       // Use the user_id to retrieve the username and password
       const sql1 = 'CALL selectUser(?)'
       db.query(sql1, [request.body.uid], (err, results, fields) => {
         const [[user]] = results
-        console.log(user);
-        if (err) return response.json({ error: err.message })
+
+        if (err) return response.json({ error: err.sqlMessage })
         const { email, password } = user
         const menu = request.files.menu[0].location
         const photos = request.files.photo
-        console.log(photos);
-        console.log(menu);
-        console.log('==========================================================');
 
         // Create the business and capture the newly created BID
         const sql2 = 'CALL insertBusiness(?,?,?,?,?,?,?,?,?,?,?,?)'
@@ -152,69 +148,93 @@ router.post(
             tel
           ],
           async (err, results, fields) => {
-            if (err) { return response.json({ error: err }) }
-            console.log(results)
-            console.log('==========================================================');
-
+            if (err) { return response.json({ error: err.sqlMessage }) }
             const [[{ BID }]] = results
             // If user uploaded any photos. Add the urls to the database
             if (photos) {
               const sql3 = 'CALL insertImage(?,?,?)'
               photos.forEach((photo) => {
                 db.query(sql3, [BID, photo.originalname, photo.location], (err, results) => {
-                  if (err) return response.json({ error: err })
+                  if (err) return response.json({ error: err.sqlMessage })
                 })
               })
             }
             // If the user provided any deals, insert them into the database
+            // Procedure requires null for some fields to distinguish between the types and how they're stored
             let deals = request.body.deals
-            console.log(deals);
-            console.log('==========================================================');
-
             if (deals) {
               deals = await JSON.parse(request.body.deals)
-              const sql4 = 'CALL insertDeal(?,?,?,?,?,?,?,?)'
-              deals.forEach(({ description, type, day, start_time, end_time, start_datetime, end_datetime }) => {
+              let sql4 = ''
+              deals.forEach(({ description, day, starts, ends }) => {
+                if (day) {
+                  sql4 = 'CALL insertDeal(?,?,"Recurring",?,?,?,null,null)'
+                } else {
+                  sql4 = 'CALL insertDeal(?,?,"Limited",?,null,null,?,?)'
+                }
                 db.query(sql4, [
                   BID,
                   description,
-                  type, day,
-                  start_time,
-                  end_time,
-                  start_datetime,
-                  end_datetime
+                  day ? day : null,
+                  starts,
+                  ends,
                 ],
                   (err, results) => {
-                    if (err) { console.error(err.stack) }
+                    if (err) { response.json({ error: err.sqlMessage }) }
                   })
               })
             }
             // Insert business hours of operation into the database
             const hours = await JSON.parse(request.body.hours)
-            console.log(hours);
-            console.log('==========================================================');
-
             const sql5 = 'CALL insertBusinessHours(?,?,?,?)'
             hours.forEach(({ day, starts, ends }) => {
               db.query(sql5, [BID, day, starts, ends], (err, results) => {
-                if (err) return response.json({ error: err })
+                if (err) return response.json({ error: err.sqlMessage })
               })
             })
-            return response.status(200).json('Business Created')
+            return response.status(200).json({ bid: BID, message: 'Business Created' })
           })
       })
     } catch (err) {
+      console.error(err.stack);
       response.status(422).json({ error: err.stack })
     }
   }
 )
 
 
-router.get('/businesses/:business_id', async (request, response) => {
+router.get('/businesses/:business_id', checkToken, async (request, response) => {
 
   // send back info for a particular business based on their unique business id
   const { business_id } = request.params
   const result = await getBusinessDetails(business_id)
+  // split the string to get street and city
+  const [street, city, rest] = result.info.address.split(', ')
+  // state and zip are not separated by a comma so they must be split as a separate action
+  const [state, zip] = rest.split(' ')
+  // reconstruct the address to have the format we need in our response
+  result.info.address = {
+    street: street,
+    city: city,
+    state: state,
+    zip: zip
+  }
+  result.deals.limited = result.deals.limited.map(deal => ({
+    day: deal.weekday,
+    description: deal.description,
+    starts: deal.start_time || deal.start_datetime,
+    ends: deal.end_time || deal.end_datetime
+  }))
+  result.deals.recurring = result.deals.recurring.map(deal => ({
+    day: deal.weekday,
+    description: deal.description,
+    starts: deal.start_time || deal.start_datetime,
+    ends: deal.end_time || deal.end_datetime
+  }))
+  result.hours = result.hours.map(item => ({
+    day: item.weekday,
+    starts: item.open_time,
+    ends: item.closing_time
+  }))
   response.json(result)
 })
 
@@ -233,13 +253,14 @@ router.get('/users/:user_id', checkToken, (request, response) => {
 
 
 router.put(
-  '/businesses/:business_id', 
+  '/businesses/:business_id',
+  checkToken,
   (request, response, next) => {
-  /**
-   * middleware to handle multipart-form and file uploads
-   * uploads files to AWS S3 and separates request form into
-   * request.body and request.files
-   */
+    /**
+     * middleware to handle multipart-form and file uploads
+     * uploads files to AWS S3 and separates request form into
+     * request.body and request.files
+     */
     upload(request, response, (err) => {
       if (request.fileValidationError) {
         return response.send(request.fileValidationError);
@@ -255,111 +276,120 @@ router.put(
       }
     })
   },
-  [ 
-  //may need to add a param for business_id, depending on if we ask for user to input
-  body(['uid', 'isAdult'], 'Field required').notEmpty().toInt(),
-  body('name', 'Field required').not().isEmpty(), 
-  body('tel')
-    .not()
-    .isEmpty()
-    .trim()
-    .matches(/^[2-9]\d{2}-\d{3}-\d{4}$/) // phone number must be in the form xxx-xxx-xxxx
-    .withMessage('Telephone number not a valid format'),
-  body(['address', 'cuisine'], 'Field required')
-    .not()
-    .isEmpty(),
-  body(['lat', 'lng'], 'Field required').notEmpty().toFloat(),
-  body('menu').not().isEmpty().trim(),
-  body('description'),
-  body('isAdult').toBoolean(), //must be an int of 0 or 1
-  ], 
-  (request, response) => {
+  [
+    //may need to add a param for business_id, depending on if we ask for user to input
+    body(['isAdult'], 'Field required').notEmpty().toInt(),
+    body('name', 'Field required').not().isEmpty(),
+    body('tel')
+      .not()
+      .isEmpty()
+      .trim()
+      .matches(/^[2-9]\d{2}-\d{3}-\d{4}$/) // phone number must be in the form xxx-xxx-xxxx
+      .withMessage('Telephone number not a valid format'),
+    body(['address', 'cuisine'], 'Field required')
+      .not()
+      .isEmpty(),
+    body('description'),
+  ],
+  async (request, response) => {
     const errors = validationResult(request);
     if (!errors.isEmpty()) {
       return response.status(422).json({ errors: errors.array() })
     }
     try {
-      const { uid, name, address, lat, lng, cuisine, description, isAdult, tel } = request.body
-      const sql1 = 'CALL selectUser(?)'
-      db.query(sql1, [request.body.uid], (err, [[user]]) =>   {
-        if (err) return response.json({ error: err.message });
-        const { email, password } = user;
-        const menu = request.files.menu[0].location;
-        const photos = request.files.photo;
-        // update info for a particular business based on their unique business id
-        const sql2 = 'CALL updateBusiness(?,?,?,?,?,?,?,?,?,?)';
-        db.query(
-          sql2,
-          [
-            request.params.business_id,
-            name,
-            address,
-            lat,
-            lng,
-            menu,
-            cuisine,
-            description,
-            isAdult,
-            tel
-          ], 
-          async (err, results) => {
-            if(err) response.status(422).json({ error: err.essage })
-            const  BID  = results
-            if (photos) {
-              const sql3 = 'CALL insertImage(?,?,?)'
-              photos.forEach((photo) => {
-                db.query(sql3, [BID, photo.originalname, photo.location], (err, results) => {
-                  if (err) return response.json({ error: err })
-                })
-              })
-            }
-            // If the user provided any deals, insert them into the database
-            if (request.body.deals) {
-              const deals = await JSON.parse(request.body.deals)
-              const sql4 = 'CALL insertDeal(?,?,?,?,?,?,?,?)'
-              deals.forEach(({ description, type, day, start_time, end_time, start_datetime, end_datetime }) => {
-                db.query(sql4, [
-                  BID,
-                  description,
-                  type, day,
-                  start_time,
-                  end_time,
-                  start_datetime,
-                  end_datetime
-                ],
-                  (err, results) => {
-                    if (err) return response.json({ error: err })
-                  })
-              })
-            }
-            // Insert business hours of operation into the database
-            //const hours = await JSON.parse(request.body.hours)
-            //const sql5 = 'CALL insertBusinessHours(?,?,?,?)'
-            //hours.forEach(({ day, open_time, close_time }) => {
-            //  db.query(sql5, [BID, day, open_time, close_time], (err, results) => {
-            //    if (err) return response.json({ error: err })
-            //  })
-            //})
-            response.status(200).json('Business Updated')
+      const { uid, name, address, cuisine, description, isAdult, tel } = request.body
+      const { business_id } = request.params
+      const menu = request.files.menu ? request.files.menu[0].location : null
+      const photos = request.files.photo;
+      const { lat, lng } = await getGeocode(address)
+      // update info for a particular business based on their unique business id
+      const sql2 = 'CALL updateBusiness(?,?,?,?,?,?,?,?,?,?)';
+      db.query(
+        sql2,
+        [
+          business_id,
+          name,
+          address,
+          lat,
+          lng,
+          menu,
+          cuisine,
+          description,
+          isAdult,
+          tel
+        ],
+        (err, results, fields) => {
+          if (err) response.json({ error: err.sqlMessage })
+
+        })
+      if (photos) {
+        const stmt = 'CALL clearImages(?)'
+        db.query(stmt, [business_id], (err, results) => {
+          if (err) return response.json({ error: err.sqlMessage })
+          const sql3 = 'CALL insertImage(?,?,?)'
+          photos.forEach((photo) => {
+            db.query(sql3, [business_id, photo.originalname, photo.location], (err, results, fields) => {
+              if (err) return response.json({ error: err.sqlMessage })
+
             })
           })
-        } catch (err) {
-        response.status(422).json({ error: err })
-        }
-})
+        })
 
-router.put('/users/:user_id', checkToken, checkToken, (request, response) => {
-  // update info for a particular user based on their unique user id
-})
+      }
+      // If the user provided any deals clear old deals and insert new deals into the database
+      if (request.body.deals) {
+        const deals = await JSON.parse(request.body.deals)
+        console.log(deals);
+        const stmt2 = 'CALL clearDeals(?)'
+        db.query(stmt2, [business_id], (err, results, fields) => {
+          if (err) return response.json({ error: err.sqlMessage })
+          // Each deal type requires certain fields to be null so generate the procedure call dynamically
+          let sql4 = ''
+          deals.forEach(({ description, day, starts, ends, }) => {
+            console.log(starts, ends);
+            if (day) {
+              sql4 = 'CALL insertDeal(?,?,"Recurring",?,?,?,null,null)'
+            } else {
+              sql4 = 'CALL insertDeal(?,?,"Limited",?,null,null,?,?)'
+              starts = moment(starts, "YYYY-MM-DD HH-mm Z").format("YYYY-MM-DD HH-mm").toString()
+              ends = moment(ends, "YYYY-MM-DD HH-mm Z").format("YYYY-MM-DD HH-mm").toString()
+              console.log(starts)
+              console.log(ends)
+            }
+            db.query(sql4, [
+              business_id,
+              description,
+              day ? day : null, // null here instead of in statement to make each call have 5 wildcards 
+              starts,
+              ends,
+            ],
+              (err, results, fields) => {
+                if (err) { console.error(err.stack) }
+              })
+          })
+        })
+      }
 
-router.patch('/users/:user_id', checkToken, (request, response) => {
-  // send back info for a particular business based on their unique business id
-})
-
-router.patch('/users/:user_id/recover', checkToken, (request, response) => {
-  // set a temporary password for a particular user based on their unique user id
-  // and send an email to use it to change
-  // TBD IF WE NEED
-})
+      // Update business hours of operation
+      if (request.body.hours) {
+        const hours = await JSON.parse(request.body.hours)
+        const stmt3 = 'CALL clearBusinessHours(?)'
+        db.query(stmt3, [business_id], (err, results) => {
+          const sql5 = 'CALL insertBusinessHours(?,?,?,?)'
+          hours.forEach(({ day, starts, ends }) => {
+            db.query(sql5, [business_id, day, starts, ends], (err, results) => {
+              if (err) return response.json({ error: err.sqlMessage })
+            })
+          })
+        })
+      }
+      setTimeout(() => {
+        response.status(200).json({ bid: business_id, message: 'Business Updated' })
+      }, 1000);
+    } catch (err) {
+      console.error(err.stack)
+      response.status(422).json({ error: err.stack })
+    }
+  })
 
 module.exports = router

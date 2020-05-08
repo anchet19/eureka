@@ -3,7 +3,7 @@ import moment from 'moment'
 import AddIcon from '@material-ui/icons/Add'
 import DeleteIcon from '@material-ui/icons/Delete'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
-import { KeyboardDateTimePicker, TimePicker, KeyboardTimePicker } from '@material-ui/pickers'
+import { DateTimePicker, TimePicker } from '@material-ui/pickers'
 import {
   Divider,
   Select,
@@ -17,6 +17,7 @@ import {
   FormControl,
   FormGroup,
   TextareaAutosize,
+  FormHelperText,
 } from '@material-ui/core';
 
 /**
@@ -52,7 +53,7 @@ const DayEventList = ({ onAdd, onRemove, dateTime, ...props }) => {
       {
 
         isDateTime ?
-          <KeyboardDateTimePicker
+          <DateTimePicker
             label={label}
             helperText={errors.timeError}
             autoOk
@@ -63,7 +64,7 @@ const DayEventList = ({ onAdd, onRemove, dateTime, ...props }) => {
             showTodayButton
           />
           :
-          <KeyboardTimePicker
+          <TimePicker
             label={label}
             autoOk
             error={errors.timeError}
@@ -84,10 +85,12 @@ const DayEventList = ({ onAdd, onRemove, dateTime, ...props }) => {
     setDescription("")
   }
   const onAddItem = () => {
-    const startTime = moment(start).day()
-    const endTime = moment(end).day()
+    const startTime = moment(start)
+    const endTime = moment(end)
     if (startTime > endTime) {
       setErrors({ timeError: 'End date cannot be before start date' })
+    } else if (hasDescription && description === '') {
+      setErrors({ descriptionError: 'Event must contain an discription' })
     } else {
       setErrors({})
       onAdd([
@@ -113,16 +116,16 @@ const DayEventList = ({ onAdd, onRemove, dateTime, ...props }) => {
       {
         props.items.map((item, index) => (
           <ListItem key={index} style={{ display: 'grid', justifyContent: 'space-between', gridTemplateColumns: '1fr, 1fr, 1fr, 50px', gridTemplateAreas: '"dt1 dt2 dt3 btn" "nu desc desc btn"', border: '1px solid lightgrey', borderRadius: '5px' }}>
-            <ListItemText style={{ gridArea: 'dt1' }}>{item.day ? item.day : moment(item.starts, STORAGE_FORMAT).format('LL')}</ListItemText>
+            <ListItemText style={{ gridArea: 'dt1' }}>{item.day ? item.day : moment(item.starts, STORAGE_FORMAT + 'Z').format('LL')}</ListItemText>
             <ListItemText style={{ gridArea: 'dt2' }}>
-              {moment(item.starts, STORAGE_FORMAT).format('LT')}
+              {moment(item.starts, `${STORAGE_FORMAT} Z`).format('LT')}
             </ListItemText>
             <ListItemText style={{ gridArea: 'dt3' }}>
-              {moment(item.ends, STORAGE_FORMAT).format('LT')}
+              {moment(item.ends, `${STORAGE_FORMAT} Z`).format('LT')}
             </ListItemText>
             <ListItemText style={{ gridArea: 'desc' }} >{item.description}</ListItemText>
             <ListItemIcon style={{ gridArea: 'btn' }}>
-              <IconButton onClick={onRemoveItem(index)}><DeleteIcon /></IconButton>
+              <IconButton onClick={onRemoveItem(index)}><DeleteIcon color="secondary" /></IconButton>
             </ListItemIcon>
           </ListItem>
         ))
@@ -142,11 +145,12 @@ const DayEventList = ({ onAdd, onRemove, dateTime, ...props }) => {
         <Picker label='End' value={end} onChange={time => setEnd(time)} />
         {hasDescription &&
           <Fragment>
+            <FormHelperText error={true}>{errors.descriptionError}</FormHelperText>
             <InputLabel id='description'>Description</InputLabel>
             <TextareaAutosize rowsMin={3} rowsMax={3} label='Description' multiline="true" value={description} onChange={e => setDescription(e.target.value)} />
           </Fragment>
         }
-        <ListItemIcon style={{ justifySelf: 'end' }} children={<IconButton onClick={onAddItem}><AddIcon /></IconButton>} />
+        <ListItemIcon style={{ justifySelf: 'end' }} children={<IconButton onClick={onAddItem}><AddIcon color="primary" /></IconButton>} />
       </ListItem >
       <Divider style={{ marginTop: '8px' }} />
     </List >

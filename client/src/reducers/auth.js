@@ -15,7 +15,7 @@ function authReducer(state, action) {
       const { token } = action.payload
       const decoded = jwt.decode(token);
       localStorage.setItem("eurekajwt", token)
-      return { user: { uid: decoded.uid, businesses: decoded.businesses, isAuthenticated: true }, error: '' }
+      return { user: { uid: decoded.uid, businesses: decoded.businesses }, isAuthenticated: true, error: '' }
     // Clear token from localStorage and set default state
     case 'logout':
       localStorage.removeItem("eurekajwt")

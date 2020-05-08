@@ -1,14 +1,10 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import './login.css';
 
 import { useAuth } from '../../hooks/useAuth'
-import { AuthContext } from '../../authProvider'
 
 const LoginInput = () => {
-  const [state, dispatch] = useContext(
-    AuthContext
-  )
-  const { login } = useAuth();
+  const { login, getErrors } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('')
   const handleUsernameChange = e => {
@@ -33,7 +29,7 @@ const LoginInput = () => {
           <input type="username" placeholder="Enter Username" username="uname" value={username} onChange={handleUsernameChange} required />
           <label htmlFor="psw"><b>Password</b></label>
           <input type="password" placeholder="Enter Password" password="pwd" value={password} onChange={handlePasswordChange} required />
-          <p style={{ color: 'red' }}>{state.error || false}</p>
+          <p style={{ color: 'red' }}>{getErrors()}</p>
 
           <button type="submit">Login</button>
 
