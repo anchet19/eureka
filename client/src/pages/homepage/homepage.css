@@ -11,11 +11,11 @@
     seems to be ok and does not cause this problem on my
     1080px height monitor.
 */
-html, body {
+/* html, body {
     max-width:  100%;
     overflow-x: hidden;
     overflow-y: hidden;
-}
+} */
 
 .map {
     display:    inline-block;

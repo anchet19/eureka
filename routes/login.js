@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken')
 
 const db = require('../db');
 const { validate } = require('../utils/auth')
+const { getUserBusinesses } = require('./controllers/user.controllers')
 
 router.post('/', [
   body('username', 'Enter a username').notEmpty(),
@@ -30,18 +31,14 @@ router.post('/', [
         const user = {}
         // retrieve the user_id
         const sql2 = 'SELECT user_id from users where email = ?'
-        db.query(sql2, [results.email], (err, [{ user_id }]) => {
+        db.query(sql2, [results.email], async (err, [{ user_id }]) => {
           if (err) return response.json({ error: err })
-          const sql3 = 'SELECT business_id as bid, name from businesses where owner_id = ?'
-          db.query(sql3, [user_id], (err, results) => {
-            const businesses = results
-            // create token and send response
-            jwt.sign({ uid: user_id, businesses: businesses }, process.env.JWT_SECRET, (err, token) => {
-              if (err) { return response.json({ error: err }) }
-              response.send({ token: token })
-            })
+          const businesses = await getUserBusinesses(user_id)
+          // create token and send response
+          jwt.sign({ uid: user_id, businesses: businesses }, process.env.JWT_SECRET, (err, token) => {
+            if (err) { return response.json({ error: err }) }
+            response.send({ token: token })
           })
-
         })
       } else {
         response.json({ error: "Invalid username and password combination" })

@@ -4,7 +4,7 @@ const axios = require('axios')
 module.exports = getGeocode = (address) => new Promise((resolve, reject) => {
   const base = 'https://geocode.search.hereapi.com/v1/geocode'
   const nospaces = address.replace(/\s/g, '+')
-  const escapedQuery = nospaces.replace(',', '%2C')
+  const escapedQuery = nospaces.replace(/,/g, '%2C')
   console.log(escapedQuery);
   axios({
     method: 'get',
