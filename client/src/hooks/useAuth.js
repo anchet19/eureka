@@ -47,6 +47,20 @@ export const useAuth = () => {
       })
   }
 
+  const updateBusiness = (bid, name, token) => {
+    dispatch({
+      type: 'updateBusiness',
+      payload: { bid: bid, name: name, token: token },
+    })
+  }
+
+  const addBusiness = (bid, name, token) => {
+    dispatch({
+      type: 'addBusiness',
+      payload: { bid: bid, name: name, token: token },
+    })
+  }
+
   // Dispatch the logout action
   const logout = () => {
     dispatch({
@@ -69,6 +83,8 @@ export const useAuth = () => {
     login,
     logout,
     isAuthenticated,
-    getErrors
+    getErrors,
+    updateBusiness,
+    addBusiness
   }
 }

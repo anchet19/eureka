@@ -43,7 +43,6 @@ export const AuthContext = React.createContext({
 
 // Export the wrapper component
 export const AuthProvider = ({ children }) => {
-
   const [state, dispatch] = useReducer(authReducer, getInitialState())
   return (
     <AuthContext.Provider value={[state, dispatch]}>

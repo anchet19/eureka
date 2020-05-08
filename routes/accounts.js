@@ -19,7 +19,7 @@ const { upload } = require('../middlewares/multer')
 
 const db = require('../db');
 
-const { createHash } = require('../utils/auth')
+const { createHash, updateToken } = require('../utils/auth')
 const { checkToken } = require('../middlewares/auth')
 
 const { getBusinessDetails } = require('./controllers/business.controllers')
@@ -46,7 +46,6 @@ router.post('/users', [
     .trim()
 
 ], async (request, response) => {
-  console.log(request.body);
   // Check for any express-validator errors
   const errors = validationResult(request);
   if (!errors.isEmpty()) {
@@ -73,6 +72,7 @@ router.post('/users', [
 // Create a new business
 router.post(
   '/businesses',
+  checkToken,
   (request, response, next) => {
     /**
      * middleware to handle multipart-form and file uploads
@@ -149,12 +149,12 @@ router.post(
           ],
           async (err, results, fields) => {
             if (err) { return response.json({ error: err.sqlMessage }) }
-            const [[{ BID }]] = results
+            const [[{ business_id }]] = results
             // If user uploaded any photos. Add the urls to the database
             if (photos) {
               const sql3 = 'CALL insertImage(?,?,?)'
               photos.forEach((photo) => {
-                db.query(sql3, [BID, photo.originalname, photo.location], (err, results) => {
+                db.query(sql3, [business_id, photo.originalname, photo.location], (err, results) => {
                   if (err) return response.json({ error: err.sqlMessage })
                 })
               })
@@ -172,7 +172,7 @@ router.post(
                   sql4 = 'CALL insertDeal(?,?,"Limited",?,null,null,?,?)'
                 }
                 db.query(sql4, [
-                  BID,
+                  business_id,
                   description,
                   day ? day : null,
                   starts,
@@ -187,11 +187,12 @@ router.post(
             const hours = await JSON.parse(request.body.hours)
             const sql5 = 'CALL insertBusinessHours(?,?,?,?)'
             hours.forEach(({ day, starts, ends }) => {
-              db.query(sql5, [BID, day, starts, ends], (err, results) => {
+              db.query(sql5, [business_id, day, starts, ends], (err, results) => {
                 if (err) return response.json({ error: err.sqlMessage })
               })
             })
-            return response.status(200).json({ bid: BID, message: 'Business Created' })
+            const token = await updateToken(request.authorizedData, business_id, name)
+            return response.status(200).json({ bid: business_id, message: 'Business Created', token: token })
           })
       })
     } catch (err) {
@@ -203,9 +204,12 @@ router.post(
 
 
 router.get('/businesses/:business_id', checkToken, async (request, response) => {
-
   // send back info for a particular business based on their unique business id
   const { business_id } = request.params
+  if (business_id === 'undefined') {
+    return response.json({ error: 'no businesses found' })
+  }
+
   const result = await getBusinessDetails(business_id)
   // split the string to get street and city
   const [street, city, rest] = result.info.address.split(', ')
@@ -339,22 +343,18 @@ router.put(
       // If the user provided any deals clear old deals and insert new deals into the database
       if (request.body.deals) {
         const deals = await JSON.parse(request.body.deals)
-        console.log(deals);
         const stmt2 = 'CALL clearDeals(?)'
         db.query(stmt2, [business_id], (err, results, fields) => {
           if (err) return response.json({ error: err.sqlMessage })
           // Each deal type requires certain fields to be null so generate the procedure call dynamically
           let sql4 = ''
           deals.forEach(({ description, day, starts, ends, }) => {
-            console.log(starts, ends);
             if (day) {
               sql4 = 'CALL insertDeal(?,?,"Recurring",?,?,?,null,null)'
             } else {
               sql4 = 'CALL insertDeal(?,?,"Limited",?,null,null,?,?)'
               starts = moment(starts, "YYYY-MM-DD HH-mm Z").format("YYYY-MM-DD HH-mm").toString()
               ends = moment(ends, "YYYY-MM-DD HH-mm Z").format("YYYY-MM-DD HH-mm").toString()
-              console.log(starts)
-              console.log(ends)
             }
             db.query(sql4, [
               business_id,
@@ -383,13 +383,23 @@ router.put(
           })
         })
       }
-      setTimeout(() => {
-        response.status(200).json({ bid: business_id, message: 'Business Updated' })
+      setTimeout(async () => {
+        const token = await updateToken(request.authorizedData, business_id, name)
+        response.status(200).json({ bid: business_id, message: 'Business Updated', token: token })
       }, 1000);
     } catch (err) {
       console.error(err.stack)
       response.status(422).json({ error: err.stack })
     }
   })
+
+
+
+
+router.get('/test', checkToken, async (req, res) => {
+  console.log(req.authorizedData);
+  const token = await updateToken(req.authorizedData, 55, "sharkeys")
+  res.json(req.authorizedData)
+})
 
 module.exports = router

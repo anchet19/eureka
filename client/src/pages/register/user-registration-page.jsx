@@ -46,7 +46,7 @@ class UserRegistration extends Component {
   }
 
   handleFirstNameChange = e => {
-    this.setState({ first_name: e.target.value }); 
+    this.setState({ first_name: e.target.value });
   }
 
   handleLastNameChange = e => {
@@ -67,7 +67,7 @@ class UserRegistration extends Component {
 
     // Post data to '/accounts/users' if passwords match
 
-    if(matches) {
+    if (matches) {
 
       const user = {
         username: this.state.username,
@@ -77,28 +77,13 @@ class UserRegistration extends Component {
         dob: this.state.dob
       };
 
-      console.log(user);
-
-
-
       axios.post('http://localhost:5000/api/v1/accounts/users', { ...user })
+        .then(response => {
 
-        
-      /*
-        axios.post('http://localhost:5000/api/v1/accounts/users', { user })
-
-        .then(result => {
-          console.log(result);
-          console.log(result.data);
         })
+        .catch(error => {
 
-        .catch(err => {
-          console.log(err);
         })
-
-      */
-
-
     }
 
   }
@@ -108,40 +93,40 @@ class UserRegistration extends Component {
       <div className="center">
 
 
-      <h1 className="titleCenter">User Registration</h1>
+        <h1 className="titleCenter">User Registration</h1>
 
-      <form onSubmit={this.handleSubmit}>
+        <form onSubmit={this.handleSubmit}>
 
-      <div className="container">
+          <div className="container">
 
-        <label><b>Enter Email</b></label>
-        <input type="email" placeholder="Enter Email" username="uemail" onChange={this.handleEmailChange} required />
+            <label><b>Enter Email</b></label>
+            <input type="email" placeholder="Enter Email" username="uemail" onChange={this.handleEmailChange} required />
 
-        <label><b>Enter Password</b></label>
-        <input type="password" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-        title="Must contain at least 8 characters, one uppercase character, one lowercase character, one number, and one special character" 
-        placeholder="Enter Password" password="pwd" onChange={this.handlePasswordField1Change} required />
+            <label><b>Enter Password</b></label>
+            <input type="password" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+              title="Must contain at least 8 characters, one uppercase character, one lowercase character, one number, and one special character"
+              placeholder="Enter Password" password="pwd" onChange={this.handlePasswordField1Change} required />
 
-        <label><b>Retype Password</b></label>
-        <input type="password" placeholder="Retype Same Password" password="pwd" onChange={this.handlePasswordField2Change}
-        required />
+            <label><b>Retype Password</b></label>
+            <input type="password" placeholder="Retype Same Password" password="pwd" onChange={this.handlePasswordField2Change}
+              required />
 
-        <label><b>First Name</b></label>
-        <input type="password1" placeholder="Enter First Name" name="fname" onChange={this.handleFirstNameChange} required />
+            <label><b>First Name</b></label>
+            <input type="password1" placeholder="Enter First Name" name="fname" onChange={this.handleFirstNameChange} required />
 
-        <label><b>Last Name</b></label>
-        <input type="password1" placeholder="Enter Last Name" name="lname" onChange={this.handleLastNameChange} required />
+            <label><b>Last Name</b></label>
+            <input type="password1" placeholder="Enter Last Name" name="lname" onChange={this.handleLastNameChange} required />
 
-        <label><b>Date of Birth</b></label>
-        <input type="date" name="dob" onChange={this.handleDOBChange} required />
-        
-        <button type="submit">Create Account</button>
+            <label><b>Date of Birth</b></label>
+            <input type="date" name="dob" onChange={this.handleDOBChange} required />
+
+            <button type="submit">Create Account</button>
+
+          </div>
+
+        </form>
 
       </div>
-
-    </form>
-
-    </div>
 
     );
   }

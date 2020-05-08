@@ -8,9 +8,10 @@ const self = {
    */
   getUserBusinesses: (UID) => new Promise((resolve, reject) => {
     const sql = 'call selectUserBusinesses(?)'
-    db.query(sql, UID, (err, [results]) => {
+    db.query(sql, [UID], (err, results) => {
+      const businesses = results ? results[0] : []
       if (err) reject({ error: err.sqlMessage })
-      resolve(results)
+      resolve(businesses)
     })
   })
 }
