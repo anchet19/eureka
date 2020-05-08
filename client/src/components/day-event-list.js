@@ -116,12 +116,12 @@ const DayEventList = ({ onAdd, onRemove, dateTime, ...props }) => {
       {
         props.items.map((item, index) => (
           <ListItem key={index} style={{ display: 'grid', justifyContent: 'space-between', gridTemplateColumns: '1fr, 1fr, 1fr, 50px', gridTemplateAreas: '"dt1 dt2 dt3 btn" "nu desc desc btn"', border: '1px solid lightgrey', borderRadius: '5px' }}>
-            <ListItemText style={{ gridArea: 'dt1' }}>{item.day ? item.day : moment(item.starts, STORAGE_FORMAT).format('LL')}</ListItemText>
+            <ListItemText style={{ gridArea: 'dt1' }}>{item.day ? item.day : moment(item.starts, STORAGE_FORMAT + 'Z').format('LL')}</ListItemText>
             <ListItemText style={{ gridArea: 'dt2' }}>
-              {moment(item.starts, STORAGE_FORMAT).format('LT')}
+              {moment(item.starts, `${STORAGE_FORMAT} Z`).format('LT')}
             </ListItemText>
             <ListItemText style={{ gridArea: 'dt3' }}>
-              {moment(item.ends, STORAGE_FORMAT).format('LT')}
+              {moment(item.ends, `${STORAGE_FORMAT} Z`).format('LT')}
             </ListItemText>
             <ListItemText style={{ gridArea: 'desc' }} >{item.description}</ListItemText>
             <ListItemIcon style={{ gridArea: 'btn' }}>

@@ -33,7 +33,6 @@ const useStyles = makeStyles(theme => ({
 const Header = () => {
   const history = useHistory()
   const { user, logout, isAuthenticated } = useAuth()
-  console.log(isAuthenticated())
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
